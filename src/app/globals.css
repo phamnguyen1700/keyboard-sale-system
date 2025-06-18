@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Ant Design 5.0 Dark Theme Customization */
+:root {
+  --primary-color: black;
+  --divider-color: #e0e0e0;
+  --secondary-color: #dbdbdb;
+}
+
+body {
+  background: var(--background-color);
+  color: var(--text-color);
+  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+/* Optional: Compact spacing */
+.ant-btn,
+.ant-input,
+.ant-select,
+.ant-table,
+.ant-card,
+.ant-form-item {
+  font-size: 14px;
+}
+
+/* Optional: Primary color for Ant Design components */
+.ant-btn-primary,
+.ant-radio-checked .ant-radio-inner,
+.ant-checkbox-checked .ant-checkbox-inner,
+.ant-switch-checked,
+.ant-slider-track,
+.ant-progress-bg,
+.ant-tag-checkable-checked,
+.ant-menu-item-selected,
+.ant-pagination-item-active {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+/* Optional: For Tailwind custom classes */
+.bg-primary {
+  background-color: var(--primary-color) !important;
+}
+
+.text-primary {
+  color: var(--primary-color) !important;
+}
+
+.custom-rounded-input {
+  border-radius: 32px !important;
+}
+.custom-rounded-input:hover,
+.custom-rounded-input:focus {
+  border-color: var(--primary-color, #222) !important;
+}
+
+.banner-border-radius {
+  border-radius: 50px !important;
+}
+
+.primary-btn {
+  background: white !important;
+  color: black !important;
+  border-color: #d2d2d2 !important;
+}
+
+.primary-btn:hover,
+.primary-btn:focus {
+  background: #f6f6f6 !important;
+  color: var(--primary-color, #222) !important;
+  border: 1px solid black !important;
+}
+
+.shop-now-btn {
+  background: white !important;
+  color: black !important;
+  border-color: #d2d2d2 !important;
+
+}
+
+.shop-now-btn:hover,
+.shop-now-btn:focus {
+  background: #f6f6f6 !important;
+  color: var(--primary-color, #222) !important;
+  border: 1px solid black !important;
+}
+
+.footer-payment-img {
+  width: 64px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  margin: 0 2px;
+}
+
+.feedback-card {
+  background: #fff;
+  border: 2px solid var(--primary-color);
+  border-radius: 24px;
+  padding: 32px 28px 32px 28px;
+  min-height: 180px;
+  margin: 0 12px;
+  box-shadow: none;
+  transition: box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.feedback-content {
+  color: #444;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: calc(1.5em * 4); /* 4 lines */
+}
