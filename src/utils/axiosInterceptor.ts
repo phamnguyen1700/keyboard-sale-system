@@ -10,7 +10,7 @@ const http = axios.create({
 });
 
 http.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().accessToken;
+  const token = useAuthStore.getState().token;
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
@@ -23,19 +23,17 @@ http.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken = useAuthStore.getState().refreshToken;
+        const { token, refreshToken } = useAuthStore.getState();
         const res = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/user/refresh`,
-          {},
+          `${process.env.NEXT_PUBLIC_API_URL}/Auth/refresh-token`,
           {
-            headers: {
-              Authorization: `Bearer ${refreshToken}`,
-            },
+            token,
+            refreshToken,
           }
         );
-        const newAccessToken = res.data.accessToken;
-        useAuthStore.getState().setAccessToken(newAccessToken);
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        const newToken = res.data.token;
+        useAuthStore.getState().setToken(newToken);
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return http(originalRequest);
       } catch (refreshError) {
         useAuthStore.getState().clearAuth();
