@@ -5,6 +5,6 @@ export const loginApi = async (payload: {
     email: string;
     password: string;
 }) => {
-    const res =await post<LoginTypes>("user/login", payload);        
+    const res =await post<LoginTypes>("Auth/login", payload);        
     return res.data;
 };

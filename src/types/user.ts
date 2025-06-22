@@ -1,22 +1,22 @@
 export interface User {
-    _id?: string;
+    id?: number;
     email?: string;
-    fullname?: string;
-    role?: string;
-    avatar?: string;
-    accessToken?: string;
-    refreshToken?: string;
+    username?: string;
+    roles?: string[];
 }
 export interface LoginTypes {
-    accessToken: string;
+    token: string;
+    expiration: string;
     refreshToken: string;
+    user: User;
 }
 export interface AuthState {
-    accessToken: string | null;
+    token: string | null;
     refreshToken: string | null;
+    expiration: string | null;
     user: User | null;
-    setTokens: (tokens: { accessToken: string; refreshToken: string }) => void;
-    setAccessToken: (accessToken: string) => void;
+    setTokens: (tokens: { token: string; refreshToken: string; expiration: string }) => void;
+    setToken: (token: string) => void;
     setUser: (user: User) => void;
     clearAuth: () => void;
 }
