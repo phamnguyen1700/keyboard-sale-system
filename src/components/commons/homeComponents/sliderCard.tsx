@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import Slider from "react-slick";
 import ProductCard from "@/components/commons/ProductCard";
@@ -7,37 +7,6 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Button } from "antd";
 
-
-const products = [
-    {
-        image: "/images/sakura.png",
-        name: "Blue Archive: Sorasaki Hina Themed Keycaps Set",
-        rating: 4.5,
-        price: 120,
-    },
-    {
-        image: "/images/sakura.png",
-        name: "Blue Archive: Sorasaki Hina Themed Keycaps Set",
-        rating: 4.5,
-        price: 120,
-    }, {
-        image: "/images/sakura.png",
-        name: "Blue Archive: Sorasaki Hina Themed Keycaps Set",
-        rating: 4.5,
-        price: 120,
-    }, {
-        image: "/images/sakura.png",
-        name: "Blue Archive: Sorasaki Hina Themed Keycaps Set",
-        rating: 4.5,
-        price: 120,
-    },
-    {
-        image: "/images/sakura.png",
-        name: "Blue Archive: Sorasaki Hina Themed Keycaps Set",
-        rating: 4.5,
-        price: 120,
-    },
-];
 // Right Arrow
 const RightAr = styled.div`
   font-size: 0;
@@ -76,8 +45,14 @@ const RightAr = styled.div`
   }
 `;
 
-export const RightArrow = ({ style, onClick }: { style?: React.CSSProperties; onClick?: () => void }) => {
-    return <RightAr style={style} onClick={onClick} />;
+export const RightArrow = ({
+  style,
+  onClick,
+}: {
+  style?: React.CSSProperties;
+  onClick?: () => void;
+}) => {
+  return <RightAr style={style} onClick={onClick} />;
 };
 
 // Left Arrow (tương tự)
@@ -117,66 +92,97 @@ const LeftAr = styled.div`
   }
 `;
 
-export const LeftArrow = ({ style, onClick }: { style?: React.CSSProperties; onClick?: () => void }) => {
-    return <LeftAr style={style} onClick={onClick} />;
+export const LeftArrow = ({
+  style,
+  onClick,
+}: {
+  style?: React.CSSProperties;
+  onClick?: () => void;
+}) => {
+  return <LeftAr style={style} onClick={onClick} />;
 };
 
 const settings = {
-    autoplay: true,
-    autoplaySpeed: 3000,
-    arrows: true,
-    nextArrow: <RightArrow />,
-    prevArrow: <LeftArrow />,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 4, 
-    slidesToScroll: 1,
-    centerMode: true,
-    responsive: [
-        {
-            breakpoint: 1024,
-            settings: { slidesToShow: 2 }
-        },
-        {
-            breakpoint: 600,
-            settings: { slidesToShow: 1 }
-        }
-    ]
+  autoplay: true,
+  autoplaySpeed: 3000,
+  arrows: true,
+  nextArrow: <RightArrow />,
+  prevArrow: <LeftArrow />,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 4,
+  slidesToScroll: 1,
+  centerMode: true,
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: { slidesToShow: 2 },
+    },
+    {
+      breakpoint: 600,
+      settings: { slidesToShow: 1 },
+    },
+  ],
 };
 
+import { IProduct } from "@/types/product";
+
 interface SliderCardProps {
-    title?: string;
+  title?: string;
+  products?: IProduct[];
+  isLoading?: boolean;
 }
 
-const SliderCard = ({ title }: SliderCardProps) => (
-    <div style={{ width: '100%', marginTop: 0, padding: '32px 0' }}>
-        {title && <h1 style={{ textAlign: 'center', fontSize: 40, fontWeight: 500, marginBottom: 32, color: 'var(--primary-color)' }}>{title}</h1>}
-        <Slider {...settings} lazyLoad="ondemand">
-            {products.map((product, idx) => (
-                <div key={idx} style={{ padding: '0 12px' }}>
-                    <ProductCard {...product} />
-                </div>
-            ))}
-        </Slider>
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 32 }}>
-            <Button
-                className="banner-border-radius primary-btn"
-                size="large"
-                style={{
-                    background: 'white',
-                    color: 'black',
-                    padding: '12px 40px',
-                    fontSize: 15,
-                    fontWeight: 500,
-                    marginBottom: 32,
-                    height: 'auto',
-                    width: '20%',
-                }}
-            >
-                View All
-            </Button>
-        </div>
+const SliderCard = ({ title, products = [], isLoading }: SliderCardProps) => (
+  <div style={{ width: "100%", marginTop: 0, padding: "32px 0" }}>
+    {title && (
+      <h1
+        style={{
+          textAlign: "center",
+          fontSize: 40,
+          fontWeight: 500,
+          marginBottom: 32,
+          color: "var(--primary-color)",
+        }}
+      >
+        {title}
+      </h1>
+    )}
+    {isLoading ? (
+      <div style={{ textAlign: "center", padding: 40 }}>Loading...</div>
+    ) : (
+      <Slider {...settings} lazyLoad="ondemand">
+        {products.map((product, idx) => (
+          <div key={product.id ?? idx} style={{ padding: "0 12px" }}>
+            <ProductCard
+              image={product.images[0]?.imageUrl || "/images/sakura.png"}
+              name={product.name}
+              rating={5} // Default rating, adjust if you have a rating field
+              price={product.price}
+            />
+          </div>
+        ))}
+      </Slider>
+    )}
+    <div style={{ display: "flex", justifyContent: "center", marginTop: 32 }}>
+      <Button
+        className="banner-border-radius primary-btn"
+        size="large"
+        style={{
+          background: "white",
+          color: "black",
+          padding: "12px 40px",
+          fontSize: 15,
+          fontWeight: 500,
+          marginBottom: 32,
+          height: "auto",
+          width: "20%",
+        }}
+      >
+        View All
+      </Button>
     </div>
+  </div>
 );
 
 export default SliderCard;
