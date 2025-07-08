@@ -1,8 +1,11 @@
 import React from 'react';
 import { Card, Rate, Typography, Space, Tag } from 'antd';
 import Image from 'next/image';
+import Link from "next/link"; 
+import { useRouter } from 'next/navigation';
 
 interface ProductCardProps {
+  id: number;
   image: string;
   name: string;
   rating: number;
@@ -12,6 +15,7 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
+  id,
   image,
   name,
   rating,
@@ -19,8 +23,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
   oldPrice,
   discount,
 }) => {
+  const router = useRouter();
   return (
     <Card
+      hoverable
+      onClick={() => router.push(`/ecomerce/products/${id}`)}
       style={{ width: 290, height: 400, boxShadow: 'none', background: 'white', borderRadius: 32 }}
       cover={
         <div

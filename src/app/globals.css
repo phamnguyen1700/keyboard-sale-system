@@ -123,3 +123,41 @@ body {
   text-overflow: ellipsis;
   max-height: calc(1.5em * 4); /* 4 lines */
 }
+
+.ant-image-mask {
+  border-radius: 16px !important;
+}
+
+.custom-product-tabs .ant-tabs-nav {
+  margin: 0 auto;
+  border-bottom: 1px solid #eee;
+  justify-content: center;
+}
+.custom-product-tabs .ant-tabs-tab {
+  font-size: 22px;
+  font-weight: 500;
+  color: #888;
+  background: transparent;
+  border: none;
+  padding: 0 48px 12px 48px;
+  margin: 0;
+  transition: color 0.2s;
+}
+.custom-product-tabs .ant-tabs-tab.ant-tabs-tab-active,
+.custom-product-tabs .ant-tabs-tab-active,
+.custom-product-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #111 !important;
+  font-weight: 700;
+  text-shadow: none !important;
+}
+.custom-product-tabs .ant-tabs-ink-bar {
+  background: #111;
+  height: 4px;
+  border-radius: 2px;
+}
+.custom-product-tabs .ant-tabs-tab:not(.ant-tabs-tab-active) {
+  color: #aaa !important;
+}
+.custom-product-tabs .ant-tabs-nav::before {
+  border-bottom: none !important;
+}

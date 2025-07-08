@@ -23,7 +23,7 @@ const ProductPage = () => {
   // If your API returns total count, use it instead of products.length
 
   return (
-    <>
+    <div className="max-w-7xl mx-auto px-20">
       <div style={{ padding: "0px 48px 0 90px" }}>
         <Breadcrumb
           items={[
@@ -67,6 +67,7 @@ const ProductPage = () => {
                 {products.map((product, idx) => (
                   <Col key={product.id ?? idx} xs={24} sm={12} md={8}>
                     <ProductCard
+                      id={product.id}
                       image={
                         product.images[0]?.imageUrl || "/images/sakura.png"
                       }
@@ -97,7 +98,7 @@ const ProductPage = () => {
           </div>
         </Content>
       </Layout>
-    </>
+    </div>
   );
 };
 
