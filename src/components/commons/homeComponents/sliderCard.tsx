@@ -155,6 +155,7 @@ const SliderCard = ({ title, products = [], isLoading }: SliderCardProps) => (
         {products.map((product, idx) => (
           <div key={product.id ?? idx} style={{ padding: "0 12px" }}>
             <ProductCard
+              id={product.id}
               image={product.images[0]?.imageUrl || "/images/sakura.png"}
               name={product.name}
               rating={5} // Default rating, adjust if you have a rating field
