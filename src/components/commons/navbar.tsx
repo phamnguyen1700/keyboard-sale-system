@@ -25,6 +25,7 @@ const { Header } = Layout;
 const Navbar: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -36,6 +37,14 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  useEffect(() => {
+    // Check if user is logged in on component mount
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      setIsLoggedIn(!!token);
+    }
+  }, []);
+
   const handleLogoClick = () => {
     router.push('/ecomerce/home');
   };
@@ -45,13 +54,28 @@ const Navbar: React.FC = () => {
   };
 
   const handleUserClick = () => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('token');
-      if (token) {
+    if (!isLoggedIn) {
+      setIsLoginModalOpen(true);
+    }
+    // If logged in, the dropdown will handle the click
+  };
+
+  const handleUserMenuClick = (key: string) => {
+    switch (key) {
+      case 'profile':
         router.push('/ecomerce/profile');
-      } else {
-        setIsLoginModalOpen(true);
-      }
+        break;
+      case 'orders':
+        router.push('/ecomerce/orders');
+        break;
+      case 'logout':
+        localStorage.removeItem('token');
+        setIsLoggedIn(false);
+        message('success', 'Đăng xuất thành công!');
+        router.push('/ecomerce/home');
+        break;
+      default:
+        break;
     }
   };
 
@@ -99,6 +123,15 @@ const Navbar: React.FC = () => {
     ],
   };
 
+  const userMenu = {
+    items: [
+      { key: 'profile', label: 'View Profile', onClick: () => handleUserMenuClick('profile') },
+      { key: 'orders', label: 'Track Your Orders', onClick: () => handleUserMenuClick('orders') },
+      { type: 'divider' as const },
+      { key: 'logout', label: 'Logout', onClick: () => handleUserMenuClick('logout') },
+    ],
+  };
+
   const menuItems = [
     {
       key: 'shop',
@@ -114,6 +147,33 @@ const Navbar: React.FC = () => {
     { key: 'new-arrivals', label: 'New Arrivals', onClick: () => handleMenuClick('new-arrivals') },
     { key: 'brands', label: 'Brands', onClick: () => handleMenuClick('brands') },
   ];
+
+  const renderUserIcon = () => {
+    if (isLoggedIn) {
+      return (
+        <Dropdown menu={userMenu} trigger={['click']} placement="bottom" overlayStyle={{ marginTop: 8 }}>
+          <UserOutlined
+            style={{ 
+              fontSize: isMobile ? 16 : 24, 
+              color: 'var(--primary-color)', 
+              cursor: 'pointer'  
+            }}
+          />
+        </Dropdown>
+      );
+    } else {
+      return (
+        <UserOutlined
+          style={{ 
+            fontSize: isMobile ? 16 : 24, 
+            color: 'var(--primary-color)', 
+            cursor: 'pointer' 
+          }}
+          onClick={handleUserClick}
+        />
+      );
+    }
+  };
 
   return (
     <>
@@ -145,10 +205,7 @@ const Navbar: React.FC = () => {
                 />
               </PopoverCart>
             </Badge>
-            <UserOutlined
-              style={{ color: 'var(--primary-color)', cursor: 'pointer' }}
-              onClick={handleUserClick}
-            />
+            {renderUserIcon()}
           </Space>
         </Header>
       ) : (
@@ -189,10 +246,7 @@ const Navbar: React.FC = () => {
                   />
                 </PopoverCart>
               </Badge>
-              <UserOutlined
-                style={{ fontSize: 24, color: 'var(--primary-color)', cursor: 'pointer' }}
-                onClick={handleUserClick}
-              />
+              {renderUserIcon()}
             </Space>
           </Space>
         </Header>
@@ -210,6 +264,7 @@ const Navbar: React.FC = () => {
 
             // Demo: Giả sử đăng nhập thành công
             localStorage.setItem('token', 'demo-token');
+            setIsLoggedIn(true);
             message('success', 'Login successful!');
             setIsLoginModalOpen(false);
           }}
