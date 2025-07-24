@@ -4,9 +4,11 @@
 
 /* Ant Design 5.0 Dark Theme Customization */
 :root {
-  --primary-color: black;
+  --primary-color: #1890ff;
   --divider-color: #e0e0e0;
-  --secondary-color: #dbdbdb;
+  --secondary-color: #f0f2f5;
+  --tertiary-color: #001529;
+  --text-color: #333;
 }
 
 body {
@@ -160,4 +162,150 @@ body {
 }
 .custom-product-tabs .ant-tabs-nav::before {
   border-bottom: none !important;
+}
+
+/* Custom Menu Styles for Sidebar */
+.custom-menu .ant-menu-item-selected {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+.custom-menu .ant-menu-item-selected .anticon {
+  color: #fff !important;
+}
+
+.custom-menu .ant-menu-item:hover {
+  background-color: #f5f5f5 !important;
+}
+
+.custom-menu .ant-menu-item {
+  color: #333;
+}
+
+.custom-menu .ant-menu-item .anticon {
+  color: #666;
+}
+
+/* Đổi màu header và border bottom cho bảng (hỗ trợ cả Ant Design Table) */
+table thead tr th,
+.ant-table-thead > th {
+  background-color: #000000 !important; /* Xám nhạt */
+  color: #fff !important;
+  font-weight: 600 !important;
+  border-right: none !important;
+}
+
+/* Hover cho từng row */
+table tbody tr:hover,
+.ant-table-tbody > tr:hover {
+  background-color: #dadada !important;
+  transition: background 0.2s;
+}
+
+/* Border đen dưới mỗi dòng */
+table tbody tr td,
+.ant-table-tbody > tr > td {
+  border-bottom: 1.5px solid #000 !important;
+  border-right: none !important;
+}
+
+/* Zebra striping cho bảng */
+table tbody tr:nth-child(even),
+.ant-table-tbody > tr:nth-child(even) {
+  background-color: #dfdfdf !important; /* Màu nền cho dòng chẵn */
+}
+
+table tbody tr:nth-child(odd),
+.ant-table-tbody > tr:nth-child(odd) {
+  background-color: #fff !important; /* Màu nền cho dòng lẻ */
+}
+
+/* Khi hover vẫn ưu tiên màu hover */
+table tbody tr:hover,
+.ant-table-tbody > tr:hover {
+  background-color: #dadada !important;
+}
+
+/* Custom pagination container */
+.ant-pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+}
+
+/* Nút số trang */
+.ant-pagination-item {
+  border-radius: 8px !important;
+  border: none !important;
+  background: #fff !important;
+  color: #222 !important;
+  transition: background 0.2s, color 0.2s;
+}
+
+.ant-pagination-item-active {
+  background: #2563eb !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.ant-pagination-item:hover {
+  background: #e0e7ff !important;
+  color: #2563eb !important;
+}
+
+/* Nút điều hướng */
+.ant-pagination-prev, .ant-pagination-next {
+  border-radius: 8px !important;
+  border: none !important;
+  background: #fff !important;
+  color: #222 !important;
+}
+
+.ant-pagination-prev:hover, .ant-pagination-next:hover {
+  background: #e0e7ff !important;
+  color: #2563eb !important;
+}
+
+/* Dropdown page size */
+.ant-pagination-options {
+  border-radius: 8px !important;
+  border: none !important;
+  background: #fff !important;
+  font-size: smaller;
+}
+
+.custom-pagination .ant-pagination-item-active {
+  background: #000000 !important;
+  color: #fff !important;
+  border: none !important;
+  font-size: smaller;
+  height: 30px;
+}
+
+.custom-pagination .ant-pagination-item-active a {
+  color: #fff !important;
+}
+
+.custom-pagination .ant-pagination-prev,
+.custom-pagination .ant-pagination-next {
+  border-radius: 100px !important;
+  background-color: white !important;
+}
+
+.ant-input {
+  border-radius: 100px !important;
+}
+
+.ant-input:focus, 
+.ant-input-focused, 
+.ant-input-affix-wrapper:focus, 
+.ant-input-affix-wrapper-focused {
+  border-color: #000 !important;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.08) !important;
+}
+
+.ant-input:hover,
+.ant-input-affix-wrapper:hover {
+  border-color: #000 !important;
 }
