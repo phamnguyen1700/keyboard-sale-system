@@ -1,14 +1,27 @@
 "use client";
 import React from "react";
-import Navbar from "@/components/commons/navbar";
+import { Layout } from "antd";
+import Sidebar from "@/components/commons/sidebar";
 
-export default function HomeLayout({ children }: { children: React.ReactNode }) {
+const { Content } = Layout;
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      <Navbar />
-      <section>
-        {children}
-      </section>
-    </>
+    <Layout style={{ minHeight: '100vh' }}>
+      <Sidebar />
+      <Layout>
+        <Content 
+          style={{ 
+            margin: '24px 16px',
+            padding: 24,
+            background: '#f5f5f5',
+            borderRadius: 8,
+            minHeight: 280,
+          }}
+        >
+          {children}
+        </Content>
+      </Layout>
+    </Layout>
   );
 }
