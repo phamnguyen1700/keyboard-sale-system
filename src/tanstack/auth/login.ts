@@ -1,7 +1,7 @@
-import { loginApi } from "@/tanstack/auth/loginApi";
+import { loginApi } from "@/zustand/services/auth/login";
 import { useAuthStore } from "@/zustand/store/userAuth";
 import { useMutation } from "@tanstack/react-query";
-import { message } from "@/components/ui/Message";
+import { toast } from "react-toastify";
 
 export const useLogin = () => {
   const setUser = useAuthStore((state) => state.setUser);
@@ -19,10 +19,11 @@ export const useLogin = () => {
     },
     onSuccess: (user) => {
       setUser(user);
-      message("success", "Đăng nhập thành công!");
+      toast.success("Đăng nhập thành công!");
     },
     onError: () => {
-      message("error", "Đăng nhập thất bại!");
+      let errorMsg = "Vui lòng kiểm tra lại tài khoản hoặc mật khẩu!";
+      toast.error(errorMsg);
     },
   });
 };
