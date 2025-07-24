@@ -19,6 +19,7 @@ import {
 import Button from '../ui/Button';
 import { message } from '../ui/Message';
 import PopoverCart from './Cart';
+import { useLogin } from "@/tanstack/auth/login";
 
 const { Header } = Layout;
 
@@ -26,6 +27,7 @@ const Navbar: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const router = useRouter();
+  const loginMutation = useLogin();
 
   useEffect(() => {
     const handleResize = () => {
@@ -204,14 +206,14 @@ const Navbar: React.FC = () => {
       >
         <Form
           layout="vertical"
-          onFinish={(values) => {
-            // TODO: Gọi API hoặc xử lý đăng nhập ở đây
-            console.log('Login values:', values);
-
-            // Demo: Giả sử đăng nhập thành công
-            localStorage.setItem('token', 'demo-token');
-            message('success', 'Login successful!');
-            setIsLoginModalOpen(false);
+          onFinish={async (values) => {
+            try {
+              await loginMutation.mutateAsync(values);
+              message('success', 'Login successful!');
+              setIsLoginModalOpen(false);
+            } catch (e) {
+              message('error', 'Login failed!');
+            }
           }}
           style={{ padding: 20 }}
         >
