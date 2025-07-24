@@ -6,6 +6,7 @@ import styled from "styled-components";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Button } from "antd";
+import { useRouter } from "next/navigation";
 
 // Right Arrow
 const RightAr = styled.div`
@@ -133,57 +134,61 @@ interface SliderCardProps {
   isLoading?: boolean;
 }
 
-const SliderCard = ({ title, products = [], isLoading }: SliderCardProps) => (
-  <div style={{ width: "100%", marginTop: 0, padding: "32px 0" }}>
-    {title && (
-      <h1
-        style={{
-          textAlign: "center",
-          fontSize: 40,
-          fontWeight: 500,
-          marginBottom: 32,
-          color: "var(--primary-color)",
-        }}
-      >
-        {title}
-      </h1>
-    )}
-    {isLoading ? (
-      <div style={{ textAlign: "center", padding: 40 }}>Loading...</div>
-    ) : (
-      <Slider {...settings} lazyLoad="ondemand">
-        {products.map((product, idx) => (
-          <div key={product.id ?? idx} style={{ padding: "0 12px" }}>
-            <ProductCard
-              id={product.id}
-              image={product.images[0]?.imageUrl || "/images/sakura.png"}
-              name={product.name}
-              rating={5} // Default rating, adjust if you have a rating field
-              price={product.price}
-            />
-          </div>
-        ))}
-      </Slider>
-    )}
-    <div style={{ display: "flex", justifyContent: "center", marginTop: 32 }}>
-      <Button
-        className="banner-border-radius primary-btn"
-        size="large"
-        style={{
-          background: "white",
-          color: "black",
-          padding: "12px 40px",
-          fontSize: 15,
-          fontWeight: 500,
-          marginBottom: 32,
-          height: "auto",
-          width: "20%",
-        }}
-      >
-        View All
-      </Button>
-    </div>
-  </div>
-);
+const SliderCard = ({ title, products = [], isLoading }: SliderCardProps) => {
+  const router = useRouter();
 
+  return (
+    <div style={{ width: "100%", marginTop: 0, padding: "32px 0" }}>
+      {title && (
+        <h1
+          style={{
+            textAlign: "center",
+            fontSize: 40,
+            fontWeight: 500,
+            marginBottom: 32,
+            color: "var(--primary-color)",
+          }}
+        >
+          {title}
+        </h1>
+      )}
+      {isLoading ? (
+        <div style={{ textAlign: "center", padding: 40 }}>Loading...</div>
+      ) : (
+        <Slider {...settings} lazyLoad="ondemand">
+          {products.map((product, idx) => (
+            <div key={product.id ?? idx} style={{ padding: "0 12px" }}>
+              <ProductCard
+                id={product.id}
+                image={product.images[0]?.imageUrl || "/images/sakura.png"}
+                name={product.name}
+                rating={5} // Default rating, adjust if you have a rating field
+                price={product.price}
+              />
+            </div>
+          ))}
+        </Slider>
+      )}
+      <div style={{ display: "flex", justifyContent: "center", marginTop: 32 }}>
+        <Button
+          className="banner-border-radius primary-btn"
+          size="large"
+          style={{
+            background: "white",
+            color: "black",
+            padding: "12px 40px",
+            fontSize: 15,
+            fontWeight: 500,
+            marginBottom: 32,
+            height: "auto",
+            width: "20%",
+          }}
+          onClick={() => router.push("/ecomerce/products")}
+        >
+          View All
+        </Button>
+      </div>
+    </div>
+  );
+};
 export default SliderCard;

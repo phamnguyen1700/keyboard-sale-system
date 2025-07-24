@@ -1,7 +1,6 @@
 "use client";
 
 import Banner from "@/components/commons/homeComponents/Banner";
-import FeedbackSlider from "@/components/commons/homeComponents/feedbackSlider";
 import SliderCard from "@/components/commons/homeComponents/sliderCard";
 import { useProducts } from "@/tanstack/product";
 
@@ -42,7 +41,6 @@ export default function Home() {
           isLoading={isLoading}
         />
       </div>
-      <FeedbackSlider />
     </div>
   );
 }
