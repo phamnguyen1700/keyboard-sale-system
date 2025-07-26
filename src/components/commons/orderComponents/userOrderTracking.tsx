@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Row, Col, Card, Typography, Tag, Button, Divider, Space, Timeline } from 'antd';
+import { Modal, Row, Col, Card, Typography, Tag, Button, Divider, Space, Timeline, Input, Rate } from 'antd';
 import { Order } from '@/types/order';
 import { useUserOrdersQuery, useConfirmOrderReceivedMutation, useOrderDetailQuery } from '@/tanstack/order';
 import { useProducts } from '@/tanstack/product';
@@ -14,6 +14,9 @@ interface UserOrderTrackingProps {
 
 const UserOrderTracking: React.FC<UserOrderTrackingProps> = ({ open, onClose }) => {
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [customerNotes, setCustomerNotes] = useState("");
+  const [rating, setRating] = useState(5);
   
   const { data: userOrders = [], isLoading } = useUserOrdersQuery();
   const { data: selectedOrder, isLoading: isDetailLoading } = useOrderDetailQuery(selectedOrderId || undefined);
@@ -42,11 +45,6 @@ const UserOrderTracking: React.FC<UserOrderTrackingProps> = ({ open, onClose }) 
     }
   };
 
-  const handleConfirmReceived = async () => {
-    if (selectedOrder) {
-      await confirmOrderMutation.mutateAsync(selectedOrder.id);
-    }
-  };
 
   const getProductName = (productId: number) => {
     const product = products.find(p => p.id === productId);
@@ -228,7 +226,7 @@ const UserOrderTracking: React.FC<UserOrderTrackingProps> = ({ open, onClose }) 
                   <Button
                     type="primary"
                     icon={<CheckOutlined />}
-                    onClick={handleConfirmReceived}
+                    onClick={() => setConfirmDialogOpen(true)}
                     loading={confirmOrderMutation.isPending}
                     style={{ marginTop: 8 }}
                   >
@@ -244,6 +242,40 @@ const UserOrderTracking: React.FC<UserOrderTrackingProps> = ({ open, onClose }) 
           )}
         </Col>
       </Row>
+
+      <Modal
+        open={confirmDialogOpen}
+        onCancel={() => setConfirmDialogOpen(false)}
+        onOk={async () => {
+          if (selectedOrder) {
+            await confirmOrderMutation.mutateAsync({
+              orderId: selectedOrder.id,
+              customerNotes,
+              rating,
+            });
+            setConfirmDialogOpen(false);
+          }
+        }}
+        okText="Gửi xác nhận"
+        cancelText="Hủy"
+        title="Xác nhận nhận hàng & Đánh giá"
+        confirmLoading={confirmOrderMutation.isPending}
+      >
+        <div style={{ marginBottom: 16 }}>
+          <b>Ghi chú cho shop (tuỳ chọn):</b>
+          <Input.TextArea
+            value={customerNotes}
+            onChange={e => setCustomerNotes(e.target.value)}
+            rows={3}
+            placeholder="Nhận xét về sản phẩm, đóng gói, giao hàng..."
+          />
+        </div>
+        <div>
+          <b>Đánh giá sản phẩm:</b>
+          <br />
+          <Rate value={rating} onChange={setRating} />
+        </div>
+      </Modal>
     </Modal>
   );
 };

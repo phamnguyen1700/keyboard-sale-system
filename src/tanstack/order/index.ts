@@ -60,11 +60,17 @@ export const useUserOrdersQuery = () => {
 export const useConfirmOrderReceivedMutation = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (orderId: number) => confirmOrderReceived(orderId),
+        // Nhận object thay vì chỉ orderId
+        mutationFn: ({
+            orderId,
+            customerNotes = "",
+            rating = 0,
+        }: { orderId: number; customerNotes?: string; rating?: number }) =>
+            confirmOrderReceived(orderId, customerNotes, rating),
         onSuccess: (_data, variables) => {
             toast.success('Cảm ơn bạn đã mua hàng!');
             queryClient.invalidateQueries({ queryKey: ['user-orders'] });
-            queryClient.invalidateQueries({ queryKey: ['order', variables] });
+            queryClient.invalidateQueries({ queryKey: ['order', variables?.orderId] });
         },
         onError: (error) => {
             toast.error('Xác nhận nhận hàng thất bại!');

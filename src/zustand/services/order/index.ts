@@ -38,7 +38,16 @@ export const updateOrderDeliveryStatus = async (id: number, status: string, admi
   return res.data;
 };
 
-export const confirmOrderReceived = async (orderId: number) => {
-  const res = await put(`Orders/${orderId}/DeliveryStatus`, { status: 'Completed' });
+export const confirmOrderReceived = async (
+  orderId: number,
+  customerNotes: string = "",
+  rating: number = 0
+) => {
+  const res = await post("Users/confirm-delivery", {
+    orderId,
+    isDelivered: true,
+    customerNotes,
+    rating,
+  });
   return res.data;
 };
