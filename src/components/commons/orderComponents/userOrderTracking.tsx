@@ -3,7 +3,6 @@ import { Modal, Row, Col, Card, Typography, Tag, Button, Divider, Space, Timelin
 import { Order } from '@/types/order';
 import { useUserOrdersQuery, useConfirmOrderReceivedMutation, useOrderDetailQuery } from '@/tanstack/order';
 import { useProducts } from '@/tanstack/product';
-import { useAuthStore } from '@/zustand/store/userAuth';
 import { CheckCircleOutlined, ClockCircleOutlined, CarOutlined, CheckOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
@@ -14,10 +13,9 @@ interface UserOrderTrackingProps {
 }
 
 const UserOrderTracking: React.FC<UserOrderTrackingProps> = ({ open, onClose }) => {
-  const { user } = useAuthStore();
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   
-  const { data: userOrders = [], isLoading } = useUserOrdersQuery(user?.id);
+  const { data: userOrders = [], isLoading } = useUserOrdersQuery();
   const { data: selectedOrder, isLoading: isDetailLoading } = useOrderDetailQuery(selectedOrderId || undefined);
   const { data: products = [] } = useProducts();
   const confirmOrderMutation = useConfirmOrderReceivedMutation();

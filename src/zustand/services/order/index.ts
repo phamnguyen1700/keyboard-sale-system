@@ -22,8 +22,12 @@ export const getOrderById = async (id: number): Promise<Order> => {
   return res.data;
 };
 
-export const getUserOrders = async (userId: number): Promise<OrderList> => {
-  const res = await get<OrderList>(`Orders/user/${userId}`);
+export const getUserOrders = async (): Promise<OrderList> => {
+  const res = await get<OrderList>('Users/orders', {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    }
+  });
   return res.data;
 };
 

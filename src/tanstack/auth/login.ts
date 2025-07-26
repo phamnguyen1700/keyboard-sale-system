@@ -15,6 +15,7 @@ export const useLogin = () => {
         refreshToken: res.refreshToken,
         expiration: res.expiration,
       });
+      localStorage.setItem('token', res.token);
       return res.user;
     },
     onSuccess: (user) => {
