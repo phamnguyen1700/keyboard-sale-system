@@ -45,7 +45,7 @@ const UserDetailDialog: React.FC<UserDetailDialogProps> = ({ open, onClose, user
       onCancel={onClose}
       title={isEdit ? 'Cập nhật người dùng' : 'Tạo mới người dùng'}
       footer={null}
-      destroyOnClose
+      destroyOnHidden
       centered
     >
       <Form

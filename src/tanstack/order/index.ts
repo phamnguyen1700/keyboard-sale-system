@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getOrders, GetOrdersParams, cancelOrder, getOrderById, updateOrderDeliveryStatus } from '@/zustand/services/order';
+import { getOrders, GetOrdersParams, cancelOrder, getOrderById, updateOrderDeliveryStatus, getUserOrders, confirmOrderReceived } from '@/zustand/services/order';
 import { Order, OrderList } from '@/types/order';
 import { toast } from 'react-toastify';
 
@@ -46,6 +46,30 @@ export const useUpdateOrderDeliveryStatusMutation = () => {
         },
         onError: (error) => {
             toast.error(error.message);
+        },
+    });
+};
+
+export const useUserOrdersQuery = (userId: number | undefined) => {
+    return useQuery<OrderList, Error>({
+        queryKey: ['user-orders', userId],
+        queryFn: () => getUserOrders(userId!),
+        enabled: !!userId,
+    });
+};
+
+export const useConfirmOrderReceivedMutation = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (orderId: number) => confirmOrderReceived(orderId),
+        onSuccess: (_data, variables) => {
+            toast.success('Cảm ơn bạn đã mua hàng!');
+            queryClient.invalidateQueries({ queryKey: ['user-orders'] });
+            queryClient.invalidateQueries({ queryKey: ['order', variables] });
+        },
+        onError: (error) => {
+            toast.error('Xác nhận nhận hàng thất bại!');
+            console.log("Lỗi xác nhận nhận hàng", error);
         },
     });
 };

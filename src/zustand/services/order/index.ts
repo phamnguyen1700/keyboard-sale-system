@@ -22,9 +22,19 @@ export const getOrderById = async (id: number): Promise<Order> => {
   return res.data;
 };
 
+export const getUserOrders = async (userId: number): Promise<OrderList> => {
+  const res = await get<OrderList>(`Orders/user/${userId}`);
+  return res.data;
+};
+
 export const updateOrderDeliveryStatus = async (id: number, status: string, adminNotes?: string) => {
   const body: Record<string, string> = { status };
   if (adminNotes) body.adminNotes = adminNotes;
   const res = await put(`Orders/${id}/DeliveryStatus`, body);
+  return res.data;
+};
+
+export const confirmOrderReceived = async (orderId: number) => {
+  const res = await put(`Orders/${orderId}/DeliveryStatus`, { status: 'Completed' });
   return res.data;
 };

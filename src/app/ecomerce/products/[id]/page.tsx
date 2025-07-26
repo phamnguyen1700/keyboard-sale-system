@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Row, Col, Typography, Button, Divider, Breadcrumb } from "antd";
 import Image from "@/components/ui/Image";
 import Link from "next/link";
@@ -25,7 +25,7 @@ export default function ProductDetail() {
   const { data: productImages = [], isLoading: imagesLoading } = useProductImages(parseInt(id)) as { data: IImage[], isLoading: boolean };
   const { data: productsList = [] } = useProducts();
   const productFromList = productsList.find((p: IProduct) => p.id === parseInt(id));
-  const simpleImageUrls = productFromList?.images || [];
+  const simpleImageUrls = useMemo(() => productFromList?.images || [], [productFromList?.images]);
 
   useEffect(() => {
     async function fetchProduct() {

@@ -19,6 +19,7 @@ import {
 import Button from "../ui/Button";
 import { message } from "../ui/Message";
 import PopoverCart from "./Cart";
+import UserOrderTracking from "./orderComponents/userOrderTracking";
 import { useCartStore } from "@/zustand/services/cart/cart";
 import { useLogin } from "@/tanstack/auth/login";
 import { useAuthStore } from "@/zustand/store/userAuth";
@@ -28,6 +29,7 @@ const { Header } = Layout;
 const Navbar: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isOrderTrackingOpen, setIsOrderTrackingOpen] = useState(false);
   const router = useRouter();
   const loginMutation = useLogin();
   const { token, user, clearAuth } = useAuthStore();
@@ -43,23 +45,22 @@ const Navbar: React.FC = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-  
+
 
   const handleLogoClick = () => {
     router.push("/ecomerce/home");
   };
-  
+
 
   const handleUserMenuClick = (key: string) => {
+    console.log('handleUserMenuClick called with key:', key);
     switch (key) {
-      case "profile":
-        router.push("/ecomerce/profile");
-        break;
       case "orders":
-        router.push("/ecomerce/orders");
+        console.log('Opening order tracking dialog...');
+        setIsOrderTrackingOpen(true);
         break;
       case 'admin':
-        router.push('/manage/dashboard');
+        router.push('/manage/order');
         break;
       case 'logout':
         clearAuth();
@@ -125,7 +126,6 @@ const Navbar: React.FC = () => {
 
   const userMenu = {
     items: [
-      { key: 'profile', label: 'View Profile', onClick: () => handleUserMenuClick('profile') },
       { key: 'orders', label: 'Track Your Orders', onClick: () => handleUserMenuClick('orders') },
       ...(isAdmin ? [{ key: 'admin', label: 'Go to Admin Site', onClick: () => handleUserMenuClick('admin') }] : []),
       { type: 'divider' as const },
@@ -381,6 +381,14 @@ const Navbar: React.FC = () => {
           </Form.Item>
         </Form>
       </Modal>
+
+      <UserOrderTracking
+        open={isOrderTrackingOpen}
+        onClose={() => {
+          console.log('Closing order tracking dialog...');
+          setIsOrderTrackingOpen(false);
+        }}
+      />
     </>
   );
 };
