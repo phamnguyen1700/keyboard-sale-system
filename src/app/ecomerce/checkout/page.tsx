@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Row, Col, Typography, Divider } from "antd";
 import { useCartStore } from "@/zustand/services/cart/cart";
@@ -8,7 +8,8 @@ import Image from "next/image";
 
 const { Title } = Typography;
 
-export default function CheckoutPage() {
+// Component that uses useSearchParams
+function CheckoutContent() {
   const { cart } = useCartStore();
   const searchParams = useSearchParams();
   const qrUrl = searchParams.get("qrUrl");
@@ -107,5 +108,14 @@ export default function CheckoutPage() {
         </Col>
       </Row>
     </div>
+  );
+}
+
+// Main component with Suspense boundary
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CheckoutContent />
+    </Suspense>
   );
 }

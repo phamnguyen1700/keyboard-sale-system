@@ -17,7 +17,9 @@ import { useAuthStore } from '@/zustand/store/userAuth';
 
 const { Sider } = Layout;
 
-interface SidebarProps {}
+interface SidebarProps {
+  [key: string]: unknown;
+}
 
 const Sidebar: React.FC<SidebarProps> = () => {
   const router = useRouter();

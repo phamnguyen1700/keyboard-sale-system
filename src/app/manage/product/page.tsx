@@ -7,7 +7,7 @@ import { Button, Tag, Select, Input } from 'antd';
 import { PlusOutlined, SearchOutlined, PictureOutlined } from '@ant-design/icons';
 import { useProducts, useProductDetail, useCreateProductMutation } from '@/tanstack/product';
 import ProductDetailDialog from '../../../components/commons/productComponents/productDetailDialog';
-import { IProduct } from '@/types/product';
+import { IProduct, IProductDetail } from '@/types/product';
 import ProductImageDialog from '../../../components/commons/productComponents/productImageDialog';
 import { useCategories } from '@/tanstack/category';
 import { ICategory } from '@/types/category';
@@ -26,7 +26,7 @@ const ProductManagement: React.FC = () => {
   const createProductMutation = useCreateProductMutation();
 
   const { data: products = [], isLoading } = useProducts();
-  const { data: productDetail, isLoading: isDetailLoading } = useProductDetail(selectedProductId ? String(selectedProductId) : '');
+  const { data: productDetail } = useProductDetail(selectedProductId ? String(selectedProductId) : '');
   const { data: categories = [], isLoading: isCategoriesLoading } = useCategories();
 
   // Filter products based on search and category
@@ -142,7 +142,7 @@ const ProductManagement: React.FC = () => {
     setCreateOpen(true);
   };
 
-  const handleCreateProduct = (values: IProduct) => {
+  const handleCreateProduct = (values: IProductDetail) => {
     createProductMutation.mutate(values, {
       onSuccess: () => setCreateOpen(false),
     });
@@ -225,14 +225,12 @@ const ProductManagement: React.FC = () => {
         open={detailOpen}
         onClose={() => setDetailOpen(false)}
         product={productDetail}
-        loading={isDetailLoading}
       />
       <ProductDetailDialog
         open={createOpen}
         onClose={() => setCreateOpen(false)}
         isCreateMode
         onCreate={handleCreateProduct}
-        loading={createProductMutation.isPending}
       />
       <ProductImageDialog
         open={productImageDialogOpen}

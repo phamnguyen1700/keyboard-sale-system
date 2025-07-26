@@ -6,8 +6,9 @@ import { Row, Col, Typography, Button, Divider, Breadcrumb } from "antd";
 import Image from "@/components/ui/Image";
 import Link from "next/link";
 import { getProductDetail } from "@/zustand/services/product/product";
-import { IProductDetail } from "@/types/product";
+import { IProductDetail, IImage, IProduct } from "@/types/product";
 import { useCartStore } from "@/zustand/services/cart/cart";
+import { useProductImages, useProducts } from "@/tanstack/product";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -19,6 +20,12 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
   const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  
+  // Sử dụng API riêng để lấy hình ảnh
+  const { data: productImages = [], isLoading: imagesLoading } = useProductImages(parseInt(id)) as { data: IImage[], isLoading: boolean };
+  const { data: productsList = [] } = useProducts();
+  const productFromList = productsList.find((p: IProduct) => p.id === parseInt(id));
+  const simpleImageUrls = productFromList?.images || [];
 
   useEffect(() => {
     async function fetchProduct() {
@@ -26,15 +33,19 @@ export default function ProductDetail() {
       try {
         const data = await getProductDetail(id);
         setProduct(data);
+        console.log("Product detail:", data);
+        console.log("Product images from API:", productImages);
+        console.log("Simple image URLs (WORKING):", simpleImageUrls);
+        console.log("Detail API images (BROKEN):", productImages);
       } catch {
         setProduct(null);
       }
       setLoading(false);
     }
     if (id) fetchProduct();
-  }, [id]);
+  }, [id, productImages, simpleImageUrls]);
 
-  if (loading) {
+  if (loading || imagesLoading) {
     return <div className="text-center py-20 text-gray-500">Loading...</div>;
   }
   if (!product) {
@@ -73,12 +84,14 @@ export default function ProductDetail() {
                 justifyContent: "space-between",
               }}
             >
-              {/* Thumbnails - left */}
+                            {/* Thumbnails - left */}
               <div
                 style={{ display: "flex", flexDirection: "column", gap: 20 }}
               >
-                {product.images && product.images.length > 0
-                  ? product.images.map((img, idx) => (
+                {(() => {
+                  const validImages = simpleImageUrls.filter((img: IImage) => img.imageUrl && img.imageUrl.trim() !== '');
+                  if (validImages.length > 0) {
+                    return validImages.map((img: IImage, idx: number) => (
                       <div
                         key={idx}
                         onClick={() => setActiveIndex(idx)}
@@ -97,16 +110,21 @@ export default function ProductDetail() {
                         <Image
                           src={img.imageUrl}
                           alt={product.name}
-                          width="100%"
-                          height="100%"
-                          style={{ borderRadius: 8, objectFit: "cover" }}
+                          width={120}
+                          height={120}
+                          style={{ 
+                            borderRadius: 8, 
+                            objectFit: "cover", 
+                            width: "100%", 
+                            height: "100%"
+                          }}
                           preview={false}
                         />
                       </div>
-                    ))
-                  : [
+                    ));
+                  } else {
+                    return (
                       <div
-                        key={0}
                         style={{
                           border: "1px solid #ddd",
                           borderRadius: 16,
@@ -118,27 +136,35 @@ export default function ProductDetail() {
                         <Image
                           src="/images/sakura.png"
                           alt={product.name}
-                          width="100%"
-                          height="100%"
-                          style={{ borderRadius: 8, objectFit: "cover" }}
+                          width={120}
+                          height={120}
+                          style={{ borderRadius: 8, objectFit: "cover", width: "100%", height: "100%" }}
                           preview={false}
                         />
-                      </div>,
-                    ]}
+                      </div>
+                    );
+                  }
+                })()}
               </div>
               {/* Main Image - right */}
-              <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ flex: 1, minWidth: 0, height: 450 }}>
                 <Image
                   src={
-                    product.images && product.images.length > 0
-                      ? product.images[activeIndex]?.imageUrl ||
-                        product.images[0].imageUrl
+                    simpleImageUrls && simpleImageUrls.length > 0
+                      ? (() => {
+                          const validImages = simpleImageUrls.filter((img: IImage) => img.imageUrl && img.imageUrl.trim() !== '');
+                          if (validImages.length === 0) return "/images/sakura.png";
+                          
+                          const currentImage = validImages[activeIndex] || validImages[0];
+                          return currentImage.imageUrl;
+                        })()
                       : "/images/sakura.png"
                   }
                   alt={product.name}
-                  width="100%"
-                  height="100%"
-                  style={{ borderRadius: 16, objectFit: "cover" }}
+                  width={450}
+                  height={450}
+                  style={{ borderRadius: 16, objectFit: "cover", width: "100%", height: "100%" }}
+                  preview={true}
                 />
               </div>
             </div>

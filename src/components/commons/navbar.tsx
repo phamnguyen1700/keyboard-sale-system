@@ -43,29 +43,12 @@ const Navbar: React.FC = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  useEffect(() => {
-    // Check if user is logged in on component mount
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
-      setIsLoggedIn(!!token);
-    }
-  }, []);
+  
 
   const handleLogoClick = () => {
     router.push("/ecomerce/home");
   };
-
-  const handleCartClick = () => {
-    router.push('/ecomerce/cart');
-  };
-
-  const handleUserClick = () => {
-    if (!isLoggedIn) {
-      setIsLoginModalOpen(true);
-    }
-    // If logged in, the dropdown will handle the click
-  };
+  
 
   const handleUserMenuClick = (key: string) => {
     switch (key) {

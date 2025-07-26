@@ -3,6 +3,7 @@ export interface User {
   email: string;
   username: string;
   roles: string[];
+  [key: string]: unknown;
 }
 
 export type UserList = User[];

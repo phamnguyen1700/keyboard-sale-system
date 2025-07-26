@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card, Rate, Typography, Space, Tag } from 'antd';
 import Image from 'next/image';
-import Link from "next/link"; 
 import { useRouter } from 'next/navigation';
 
 interface ProductCardProps {
