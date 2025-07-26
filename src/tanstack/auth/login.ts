@@ -22,8 +22,7 @@ export const useLogin = () => {
       toast.success("Đăng nhập thành công!");
     },
     onError: () => {
-      let errorMsg = "Vui lòng kiểm tra lại tài khoản hoặc mật khẩu!";
-      toast.error(errorMsg);
+      toast.error("Vui lòng kiểm tra lại tài khoản hoặc mật khẩu!");
     },
   });
 };

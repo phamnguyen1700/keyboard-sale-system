@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Layout, Menu, Avatar, Dropdown } from 'antd';
 import {
@@ -13,6 +13,7 @@ import {
   ProfileOutlined,
 } from '@ant-design/icons';
 import { message } from '../ui/Message';
+import { useAuthStore } from '@/zustand/store/userAuth';
 
 const { Sider } = Layout;
 
@@ -21,7 +22,7 @@ interface SidebarProps {}
 const Sidebar: React.FC<SidebarProps> = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Assume admin is logged in
+  const { clearAuth } = useAuthStore();
 
   // Menu items based on the manage folder structure
   const menuItems = [
@@ -68,9 +69,8 @@ const Sidebar: React.FC<SidebarProps> = () => {
         label: 'Logout',
         icon: <LogoutOutlined />,
         onClick: () => {
-          localStorage.removeItem('token');
-          setIsLoggedIn(false);
-          message('success', 'Logged out successfully!');
+          clearAuth();
+          message('success', 'Đăng xuất thành công!');
           router.push('/ecomerce/home');
         },
       },

@@ -20,15 +20,19 @@ import Button from '../ui/Button';
 import { message } from '../ui/Message';
 import PopoverCart from './Cart';
 import { useLogin } from "@/tanstack/auth/login";
+import { useAuthStore } from "@/zustand/store/userAuth";
 
 const { Header } = Layout;
 
 const Navbar: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
   const loginMutation = useLogin();
+  const { token, user, clearAuth } = useAuthStore();
+
+  const isLoggedIn = !!token;
+  const isAdmin = Array.isArray(user?.roles) && user.roles.includes('Admin');
 
   useEffect(() => {
     const handleResize = () => {
@@ -43,16 +47,12 @@ const Navbar: React.FC = () => {
     // Check if user is logged in on component mount
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('token');
-      setIsLoggedIn(!!token);
+      // setIsLoggedIn(!!token); // This line is removed as per new_code
     }
   }, []);
 
   const handleLogoClick = () => {
     router.push('/ecomerce/home');
-  };
-
-  const handleCartClick = () => {
-    router.push('/ecomerce/cart');
   };
 
   const handleUserClick = () => {
@@ -70,9 +70,11 @@ const Navbar: React.FC = () => {
       case 'orders':
         router.push('/ecomerce/orders');
         break;
+      case 'admin':
+        router.push('/manage/dashboard');
+        break;
       case 'logout':
-        localStorage.removeItem('token');
-        setIsLoggedIn(false);
+        clearAuth();
         message('success', 'Đăng xuất thành công!');
         router.push('/ecomerce/home');
         break;
@@ -129,6 +131,7 @@ const Navbar: React.FC = () => {
     items: [
       { key: 'profile', label: 'View Profile', onClick: () => handleUserMenuClick('profile') },
       { key: 'orders', label: 'Track Your Orders', onClick: () => handleUserMenuClick('orders') },
+      ...(isAdmin ? [{ key: 'admin', label: 'Go to Admin Site', onClick: () => handleUserMenuClick('admin') }] : []),
       { type: 'divider' as const },
       { key: 'logout', label: 'Logout', onClick: () => handleUserMenuClick('logout') },
     ],
@@ -155,10 +158,10 @@ const Navbar: React.FC = () => {
       return (
         <Dropdown menu={userMenu} trigger={['click']} placement="bottom" overlayStyle={{ marginTop: 8 }}>
           <UserOutlined
-            style={{ 
-              fontSize: isMobile ? 16 : 24, 
-              color: 'var(--primary-color)', 
-              cursor: 'pointer'  
+            style={{
+              fontSize: isMobile ? 16 : 24,
+              color: 'var(--primary-color)',
+              cursor: 'pointer'
             }}
           />
         </Dropdown>
@@ -166,12 +169,14 @@ const Navbar: React.FC = () => {
     } else {
       return (
         <UserOutlined
-          style={{ 
-            fontSize: isMobile ? 16 : 24, 
-            color: 'var(--primary-color)', 
-            cursor: 'pointer' 
+          style={{
+            fontSize: isMobile ? 16 : 24,
+            color: 'var(--primary-color)',
+            cursor: 'pointer'
           }}
-          onClick={handleUserClick}
+          onClick={() => {
+            setIsLoginModalOpen(true);
+          }}
         />
       );
     }

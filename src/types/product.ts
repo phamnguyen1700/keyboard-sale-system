@@ -35,3 +35,4 @@ export interface IProductFilter {
   pageSize?: number;
 }
 export type IProductResponse = IProduct[];
+

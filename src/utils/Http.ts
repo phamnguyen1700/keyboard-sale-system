@@ -34,3 +34,16 @@ export const remove = async <T = unknown>(
     const res: AxiosResponse<T> = await http.delete(url, option);
     return res;
 };
+
+export const postForm = async <T = unknown>(
+    url: string,
+    data: FormData,
+    option: AxiosRequestConfig = {}
+  ): Promise<AxiosResponse<T>> => {
+    const config = { ...option };
+    if (!config.headers) config.headers = {};
+    delete config.headers['Content-Type']; // QUAN TRỌNG
+    const res: AxiosResponse<T> = await http.post(url, data, config);
+    return res;
+  };
+  

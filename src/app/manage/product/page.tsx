@@ -3,126 +3,44 @@
 import React, { useState } from 'react';
 import CustomTable from '../../../components/commons/core/CustomTable';
 import { Column } from '../../../types/table';
-import { Button, Tag, Space, Select, Input } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
+import { Button, Tag, Select, Input } from 'antd';
+import { PlusOutlined, SearchOutlined, PictureOutlined } from '@ant-design/icons';
+import { useProducts, useProductDetail, useCreateProductMutation } from '@/tanstack/product';
+import ProductDetailDialog from '../../../components/commons/productComponents/productDetailDialog';
+import { IProduct } from '@/types/product';
+import ProductImageDialog from '../../../components/commons/productComponents/productImageDialog';
+import { useCategories } from '@/tanstack/category';
+import { ICategory } from '@/types/category';
 
 const { Option } = Select;
-
-// Product interface
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  stockQuantity: number;
-  categoryId: number;
-  categoryName: string;
-  images: string[];
-}
 
 const ProductManagement: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
+  const [productImageDialogOpen, setProductImageDialogOpen] = useState(false);
+  const [createOpen, setCreateOpen] = useState(false);
+  const createProductMutation = useCreateProductMutation();
 
-  // Fake data based on API response
-  const fakeProducts: Product[] = [
-    {
-      id: 1,
-      name: "Cherry Profile Keycap Set",
-      description: "A high-quality Cherry profile keycap set with premium PBT material.",
-      price: 49.99,
-      stockQuantity: 10000,
-      categoryId: 1,
-      categoryName: "Keycap Sets",
-      images: []
-    },
-    {
-      id: 2,
-      name: "Artisan Keycap - Dragon",
-      description: "A unique artisan keycap shaped like a dragon with detailed craftsmanship.",
-      price: 29.99,
-      stockQuantity: 10000,
-      categoryId: 1,
-      categoryName: "Keycap Sets",
-      images: []
-    },
-    {
-      id: 3,
-      name: "Mechanical Keyboard - RGB",
-      description: "Full-size mechanical keyboard with RGB backlighting and hot-swappable switches.",
-      price: 129.99,
-      stockQuantity: 500,
-      categoryId: 2,
-      categoryName: "Keyboards",
-      images: []
-    },
-    {
-      id: 4,
-      name: "Cherry MX Blue Switches",
-      description: "Tactile and clicky switches perfect for typing enthusiasts.",
-      price: 0.75,
-      stockQuantity: 5000,
-      categoryId: 3,
-      categoryName: "Switches",
-      images: []
-    },
-    {
-      id: 5,
-      name: "Keyboard Wrist Rest",
-      description: "Ergonomic wrist rest for comfortable typing experience.",
-      price: 19.99,
-      stockQuantity: 200,
-      categoryId: 4,
-      categoryName: "Accessories",
-      images: []
-    },
-    {
-      id: 6,
-      name: "SA Profile Keycap Set",
-      description: "Spherical SA profile keycaps with retro aesthetic.",
-      price: 89.99,
-      stockQuantity: 50,
-      categoryId: 1,
-      categoryName: "Keycap Sets",
-      images: []
-    },
-    {
-      id: 7,
-      name: "Tenkeyless Keyboard",
-      description: "Compact tenkeyless mechanical keyboard for space-saving setup.",
-      price: 99.99,
-      stockQuantity: 300,
-      categoryId: 2,
-      categoryName: "Keyboards",
-      images: []
-    },
-    {
-      id: 8,
-      name: "Gateron Red Switches",
-      description: "Smooth linear switches with light actuation force.",
-      price: 0.65,
-      stockQuantity: 3000,
-      categoryId: 3,
-      categoryName: "Switches",
-      images: []
-    }
-  ];
+  const { data: products = [], isLoading } = useProducts();
+  const { data: productDetail, isLoading: isDetailLoading } = useProductDetail(selectedProductId ? String(selectedProductId) : '');
+  const { data: categories = [], isLoading: isCategoriesLoading } = useCategories();
 
   // Filter products based on search and category
-  const filteredProducts = fakeProducts.filter(product => {
+  const filteredProducts = products.filter((product: IProduct) => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || product.categoryName === selectedCategory;
+      product.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === 'all' ||
+      product.categoryId === Number(selectedCategory);
     return matchesSearch && matchesCategory;
   });
 
-  // Get unique categories for filter
-  const categories = ['all', ...Array.from(new Set(fakeProducts.map(p => p.categoryName)))];
-
   // Column definitions
-  const columns: Column<Product>[] = [
+  const columns: Column<IProduct>[] = [
     {
       key: 'id',
       title: 'ID',
@@ -138,7 +56,7 @@ const ProductManagement: React.FC = () => {
       render: (record) => (
         <div>
           <div className="font-medium">{record.name}</div>
-          <div className="text-xs text-gray-500 truncate">{record.description}</div>
+          <div className="text-xs text-gray-500 truncate">{record.description.length > 30 ? record.description.substring(0, 30) + '...' : record.description}</div>
         </div>
       ),
     },
@@ -177,50 +95,27 @@ const ProductManagement: React.FC = () => {
       ),
     },
     {
-      key: 'actions',
-      title: 'Actions',
-      width: 150,
+      key: 'image',
+      title: 'Image',
+      width: 80,
       align: 'center',
       render: (record) => (
-        <Space size="small">
-          <Button 
-            type="primary" 
-            size="small" 
-            icon={<EditOutlined />}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleEdit(record);
-            }}
-          >
-          </Button>
-          <Button 
-            danger 
-            size="small" 
-            icon={<DeleteOutlined />}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDelete(record);
-            }}
-          >
-          </Button>
-        </Space>
+        <Button
+          type="text"
+          icon={<PictureOutlined style={{ fontSize: 22 }} />}
+          onClick={e => {
+            e.stopPropagation();
+            setSelectedProductId(record.id);
+            setProductImageDialogOpen(true);
+          }}
+        />
       ),
     },
   ];
 
-  const handleRowClick = (record: Product) => {
-    console.log('Product clicked:', record);
-    // Navigate to product detail or open edit modal
-  };
-
-  const handleEdit = (record: Product) => {
-    console.log('Edit product:', record);
-    // Open edit modal or navigate to edit page
-  };
-
-  const handleDelete = (record: Product) => {
-    console.log('Delete product:', record);
-    // Show confirmation modal and delete
+  const handleRowClick = (record: IProduct) => {
+    setSelectedProductId(record.id);
+    setDetailOpen(true);
   };
 
   const handlePaginationChange = (page: number, size: number) => {
@@ -244,8 +139,13 @@ const ProductManagement: React.FC = () => {
   };
 
   const handleAddProduct = () => {
-    console.log('Add new product');
-    // Navigate to add product page or open modal
+    setCreateOpen(true);
+  };
+
+  const handleCreateProduct = (values: IProduct) => {
+    createProductMutation.mutate(values, {
+      onSuccess: () => setCreateOpen(false),
+    });
   };
 
   return (
@@ -256,8 +156,8 @@ const ProductManagement: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-800">Product Management</h1>
           <p className="text-gray-600">Manage your product inventory</p>
         </div>
-        <Button 
-          type="primary" 
+        <Button
+          type="primary"
           icon={<PlusOutlined />}
           size="large"
           onClick={handleAddProduct}
@@ -275,7 +175,7 @@ const ProductManagement: React.FC = () => {
               allowClear
               size="large"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => handleSearch(e.target.value, selectedCategory)}
               style={{ width: '100%' }}
             />
           </div>
@@ -285,15 +185,15 @@ const ProductManagement: React.FC = () => {
             size="large"
             style={{ width: 200 }}
             placeholder="Select Category"
+            loading={isCategoriesLoading}
           >
-            {categories.map(category => (
-              <Option key={category} value={category}>
-                {category === 'all' ? 'All Categories' : category}
-              </Option>
+            <Option key="all" value="all">All Categories</Option>
+            {(categories as ICategory[]).map((cat: ICategory) => (
+              <Option key={cat.id} value={cat.id}>{cat.name}</Option>
             ))}
           </Select>
-          <Button 
-            type="primary" 
+          <Button
+            type="primary"
             icon={<SearchOutlined />}
             size="large"
             onClick={() => handleSearch(searchTerm, selectedCategory)}
@@ -303,21 +203,41 @@ const ProductManagement: React.FC = () => {
         </div>
       </div>
 
-      {/* Table */}
-      <CustomTable<Product>
-        columns={columns}
-        records={filteredProducts}
-        onRowClick={handleRowClick}
-        pagination={{
-          current: currentPage,
-          pageSize: pageSize,
-          total: filteredProducts.length,
-          onChange: handlePaginationChange,
-        }}
-        loading={false}
-        bordered={true}
-        size="middle"
-        rowKey="id"
+      {/* Table container */}
+      <div className="bg-gray-50 rounded-lg p-4 mb-6 shadow-md">
+        <CustomTable<IProduct>
+          columns={columns}
+          records={filteredProducts}
+          onRowClick={handleRowClick}
+          pagination={{
+            current: currentPage,
+            pageSize: pageSize,
+            total: filteredProducts.length,
+            onChange: handlePaginationChange,
+          }}
+          loading={isLoading}
+          bordered={true}
+          size="middle"
+          rowKey="id"
+        />
+      </div>
+      <ProductDetailDialog
+        open={detailOpen}
+        onClose={() => setDetailOpen(false)}
+        product={productDetail}
+        loading={isDetailLoading}
+      />
+      <ProductDetailDialog
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        isCreateMode
+        onCreate={handleCreateProduct}
+        loading={createProductMutation.isPending}
+      />
+      <ProductImageDialog
+        open={productImageDialogOpen}
+        onClose={() => setProductImageDialogOpen(false)}
+        productId={selectedProductId}
       />
     </div>
   );

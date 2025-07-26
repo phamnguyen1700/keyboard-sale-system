@@ -4,32 +4,26 @@ import React, { useState } from "react";
 import CustomTable from '../../../components/commons/core/CustomTable';
 import { Column } from '../../../types/table';
 import { User } from '../../../types/user';
-import { Button, Tag, Input, Space } from "antd";
-import { SearchOutlined, EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Tag, Input, Space, message } from "antd";
+import { SearchOutlined, PlusOutlined } from "@ant-design/icons";
+import UserDetailDialog from '../../../components/commons/userComponents/userDetailDialog';
+import { useUsersQuery, useCreateUserMutation, useUpdateUserMutation, useDeleteUserMutation } from '@/tanstack/user';
 
 const UserManagement: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  // Fake data
-  const fakeUsers: User[] = [
-    {
-      id: 1,
-      email: "admin@example.com",
-      username: "admin",
-      roles: ["Admin"],
-    },
-    {
-      id: 2,
-      email: "user1@example.com",
-      username: "user1",
-      roles: ["User"],
-    },
-  ];
+  const { data: users = [], refetch } = useUsersQuery();
+  const createUserMutation = useCreateUserMutation();
+  const updateUserMutation = useUpdateUserMutation();
+  const deleteUserMutation = useDeleteUserMutation();
 
   // Filter users by username or email
-  const filteredUsers = fakeUsers.filter(user =>
+  const filteredUsers = users.filter(user =>
     (user.username || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
     (user.email || "").toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -70,35 +64,70 @@ const UserManagement: React.FC = () => {
         </Space>
       ),
     },
-    {
-      key: "actions",
-      title: "Actions",
-      width: 150,
-      align: "center",
-      render: (record) => (
-        <Space size="small">
-          <Button
-            type="primary"
-            size="small"
-            icon={<EditOutlined />}
-            onClick={e => e.stopPropagation()}
-          >
-          </Button>
-          <Button
-            danger
-            size="small"
-            icon={<DeleteOutlined />}
-            onClick={e => e.stopPropagation()}
-          >
-          </Button>
-        </Space>
-      ),
-    },
   ];
 
   const handlePaginationChange = (page: number, size: number) => {
     setCurrentPage(page);
     setPageSize(size);
+  };
+
+  const handleRowClick = (user: User) => {
+    setSelectedUser(user);
+    setDialogOpen(true);
+  };
+
+  const handleAddUser = () => {
+    setSelectedUser(null);
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setSelectedUser(null);
+  };
+
+  const handleSubmit = async (values: Omit<User, 'id'>) => {
+    setLoading(true);
+    try {
+      await createUserMutation.mutateAsync({ ...values, roles: values.roles });
+      message.success('Tạo mới người dùng thành công!');
+      refetch();
+      handleCloseDialog();
+    } catch {
+      message.error('Tạo mới thất bại!');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdate = async (values: Partial<User>) => {
+    if (!selectedUser) return;
+    setLoading(true);
+    try {
+      await updateUserMutation.mutateAsync({ id: selectedUser.id, user: { ...values, roles: values.roles } });
+      message.success('Cập nhật người dùng thành công!');
+      refetch();
+      handleCloseDialog();
+    } catch {
+      message.error('Cập nhật thất bại!');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!selectedUser) return;
+    setLoading(true);
+    try {
+      await deleteUserMutation.mutateAsync(selectedUser.id);
+      message.success('Xóa người dùng thành công!');
+      refetch();
+      handleCloseDialog();
+    } catch {
+      message.error('Xóa thất bại!');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -109,7 +138,7 @@ const UserManagement: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-800">User Management</h1>
           <p className="text-gray-600">Manage your users</p>
         </div>
-        <Button type="primary" icon={<PlusOutlined />} size="large">
+        <Button type="primary" icon={<PlusOutlined />} size="large" onClick={handleAddUser}>
           Add User
         </Button>
       </div>
@@ -130,26 +159,38 @@ const UserManagement: React.FC = () => {
             type="primary"
             icon={<SearchOutlined />}
             size="large"
-            onClick={() => {}}
+            onClick={() => { }}
           >
             Search
           </Button>
         </div>
       </div>
       {/* Table */}
-      <CustomTable<User>
-        columns={columns}
-        records={filteredUsers}
-        pagination={{
-          current: currentPage,
-          pageSize: pageSize,
-          total: filteredUsers.length,
-          onChange: handlePaginationChange,
-        }}
-        loading={false}
-        bordered={true}
-        size="middle"
-        rowKey="id"
+      <div className="bg-gray-50 rounded-lg p-4 mb-6 shadow-md">
+        <CustomTable<User>
+          columns={columns}
+          records={filteredUsers}
+          pagination={{
+            current: currentPage,
+            pageSize: pageSize,
+            total: filteredUsers.length,
+            onChange: handlePaginationChange,
+          }}
+          loading={false}
+          bordered={true}
+          size="middle"
+          rowKey="id"
+          onRowClick={handleRowClick}
+        />
+      </div>
+      <UserDetailDialog
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        user={selectedUser}
+        onSubmit={handleSubmit}
+        onUpdate={handleUpdate}
+        onDelete={handleDelete}
+        loading={loading}
       />
     </div>
   );
