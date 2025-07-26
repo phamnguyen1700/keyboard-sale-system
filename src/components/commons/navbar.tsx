@@ -23,6 +23,7 @@ import UserOrderTracking from "./orderComponents/userOrderTracking";
 import { useCartStore } from "@/zustand/services/cart/cart";
 import { useLogin } from "@/tanstack/auth/login";
 import { useAuthStore } from "@/zustand/store/userAuth";
+import { useRegisterMutation } from "@/tanstack/user";
 
 const { Header } = Layout;
 
@@ -30,8 +31,10 @@ const Navbar: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isOrderTrackingOpen, setIsOrderTrackingOpen] = useState(false);
+  const [isRegisterMode, setIsRegisterMode] = useState(false);
   const router = useRouter();
   const loginMutation = useLogin();
+  const registerMutation = useRegisterMutation();
   const { token, user, clearAuth } = useAuthStore();
 
   const isLoggedIn = !!token;
@@ -328,58 +331,156 @@ const Navbar: React.FC = () => {
       )}
       <Modal
         open={isLoginModalOpen}
-        onCancel={() => setIsLoginModalOpen(false)}
+        onCancel={() => {
+          setIsLoginModalOpen(false);
+          setIsRegisterMode(false);
+        }}
         footer={null}
       >
-        <Form
-          layout="vertical"
-          onFinish={async (values) => {
-            try {
-              await loginMutation.mutateAsync(values);
-              message("success", "Login successful!");
-              setIsLoginModalOpen(false);
-            } catch {
-              message("error", "Login failed!");
-            }
-          }}
-          style={{ padding: 20 }}
-        >
-          <Form.Item style={{ textAlign: "center" }}>
-            <b style={{ fontSize: 16, fontWeight: 600 }}>
-              🔥🔥🔥Đăng nhập với email chính chủ để tụi mình takecare bạn tốt
-              nhất🔥🔥🔥
-            </b>
-          </Form.Item>
-          <Form.Item
-            label={<b style={{ fontSize: 16, fontWeight: 600 }}>Email</b>}
-            name="email"
-            rules={[
-              { required: true, message: "Hãy nhập email của bạn!" },
-              { type: "email", message: "Hãy nhập email hợp lệ!" },
-            ]}
+        {!isRegisterMode ? (
+          <Form
+            layout="vertical"
+            onFinish={async (values) => {
+              try {
+                const data = await loginMutation.mutateAsync(values);
+                localStorage.setItem('token', String(data.token));
+                message("success", "Login successful!");
+                setIsLoginModalOpen(false);
+              } catch {
+                message("error", "Login failed!");
+              }
+            }}
+            style={{ padding: 20 }}
           >
-            <AntInput placeholder="you@example.com" />
-          </Form.Item>
-
-          <Form.Item
-            label={<b style={{ fontSize: 16, fontWeight: 600 }}>Password</b>}
-            name="password"
-            rules={[{ required: true, message: "Hãy nhập mật khẩu của bạn!" }]}
-          >
-            <AntInput.Password placeholder="Nhập mật khẩu của bạn" />
-          </Form.Item>
-
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              block
-              style={{ backgroundColor: "var(--primary-color)" }}
+            <Form.Item style={{ textAlign: "center" }}>
+              <b style={{ fontSize: 16, fontWeight: 600 }}>
+                🔥🔥🔥Đăng nhập với email chính chủ để tụi mình takecare bạn tốt nhất🔥🔥🔥
+              </b>
+            </Form.Item>
+            <Form.Item
+              label={<b style={{ fontSize: 16, fontWeight: 600 }}>Email</b>}
+              name="email"
+              rules={[
+                { required: true, message: "Hãy nhập email của bạn!" },
+                { type: "email", message: "Hãy nhập email hợp lệ!" },
+              ]}
             >
-              Đăng nhập
-            </Button>
-          </Form.Item>
-        </Form>
+              <AntInput placeholder="you@example.com" />
+            </Form.Item>
+            <Form.Item
+              label={<b style={{ fontSize: 16, fontWeight: 600 }}>Password</b>}
+              name="password"
+              rules={[
+                { required: true, message: "Hãy nhập mật khẩu của bạn!" },
+                { min: 6, message: "Mật khẩu tối thiểu 6 ký tự!" },
+              ]}
+            >
+              <AntInput.Password placeholder="Nhập mật khẩu của bạn" />
+            </Form.Item>
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                style={{ backgroundColor: "var(--primary-color)" }}
+                loading={loginMutation.isPending}
+              >
+                Đăng nhập
+              </Button>
+            </Form.Item>
+            <div style={{ textAlign: "center", marginTop: 8 }}>
+              <span style={{ color: "#888" }}>
+                Đăng ký tài khoản để nhận nhiều ưu đãi.{' '}
+                <a
+                  style={{ color: "#1677ff", cursor: "pointer" }}
+                  onClick={() => setIsRegisterMode(true)}
+                >
+                  Đăng ký
+                </a>
+              </span>
+            </div>
+          </Form>
+        ) : (
+          <Form
+            layout="vertical"
+            onFinish={async (values) => {
+              try {
+                await registerMutation.mutateAsync(values);
+                message("success", "Đăng ký thành công! Vui lòng đăng nhập.");
+                setIsRegisterMode(false);
+              } catch (err: any) {
+                message("error", err?.response?.data?.message || "Đăng ký thất bại!");
+              }
+            }}
+            style={{ padding: 20 }}
+          >
+            <Form.Item style={{ textAlign: "center" }}>
+              <b style={{ fontSize: 16, fontWeight: 600 }}>
+                Đăng ký tài khoản mới
+              </b>
+            </Form.Item>
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                { required: true, message: "Hãy nhập email của bạn!" },
+                { type: "email", message: "Hãy nhập email hợp lệ!" },
+              ]}
+            >
+              <AntInput placeholder="you@example.com" />
+            </Form.Item>
+            <Form.Item
+              label="Mật khẩu"
+              name="password"
+              rules={[
+                { required: true, message: "Hãy nhập mật khẩu!" },
+                { min: 6, message: "Mật khẩu tối thiểu 6 ký tự!" },
+                {
+                  pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).*$/,
+                  message: "Mật khẩu phải có chữ hoa, chữ thường, số và ký tự đặc biệt!",
+                },
+              ]}
+            >
+              <AntInput.Password placeholder="Nhập mật khẩu" />
+            </Form.Item>
+            <Form.Item
+              label="Tên đăng nhập"
+              name="userName"
+              rules={[{ required: true, message: "Hãy nhập tên đăng nhập!" }]}
+            >
+              <AntInput placeholder="Tên đăng nhập" />
+            </Form.Item>
+            <Form.Item
+              label="Họ và tên"
+              name="fullName"
+              rules={[{ required: true, message: "Hãy nhập họ tên!" }]}
+            >
+              <AntInput placeholder="Họ và tên" />
+            </Form.Item>
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                style={{ backgroundColor: "var(--primary-color)" }}
+                loading={registerMutation.isPending}
+              >
+                Đăng ký
+              </Button>
+            </Form.Item>
+            <div style={{ textAlign: "center", marginTop: 8 }}>
+              <span style={{ color: "#888" }}>
+                Đã có tài khoản?{' '}
+                <a
+                  style={{ color: "#1677ff", cursor: "pointer" }}
+                  onClick={() => setIsRegisterMode(false)}
+                >
+                  Đăng nhập
+                </a>
+              </span>
+            </div>
+          </Form>
+        )}
       </Modal>
 
       <UserOrderTracking

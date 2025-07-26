@@ -1,6 +1,7 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { getUsers, getUserById, createUser, updateUser, deleteUser } from '@/zustand/services/user';
+import { getUsers, getUserById, createUser, updateUser, deleteUser, registerUser, RegisterPayload } from '@/zustand/services/user';
 import { User, UserList } from '@/types/user';
+import { toast } from 'react-toastify';
 
 export const useUsersQuery = () => {
   return useQuery<UserList, Error>({
@@ -32,5 +33,17 @@ export const useUpdateUserMutation = () => {
 export const useDeleteUserMutation = () => {
   return useMutation({
     mutationFn: (id: number) => deleteUser(id),
+  });
+};
+
+export const useRegisterMutation = () => {
+  return useMutation({
+    mutationFn: (payload: RegisterPayload) => registerUser(payload),
+    onSuccess: () => {
+      toast.success('Đăng ký thành công!');
+    },
+    onError: () => {
+      toast.error('Đăng ký thất bại!');
+    },
   });
 };

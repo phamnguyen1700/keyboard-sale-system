@@ -24,3 +24,15 @@ export const updateUser = async (id: number, user: Partial<User>): Promise<User>
 export const deleteUser = async (id: number): Promise<void> => {
   await remove(`Users/${id}`);
 };
+
+export interface RegisterPayload {
+  email: string;
+  password: string;
+  userName: string;
+  fullName: string;
+}
+
+export const registerUser = async (payload: RegisterPayload) => {
+  const res = await post('Auth/register', payload);
+  return res.data;
+};
