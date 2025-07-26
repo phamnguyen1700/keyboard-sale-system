@@ -5,6 +5,7 @@ import CartItem from "./CartItem";
 import Button from "../ui/Button";
 import { CartItem as CartItemType } from "@/types/cart";
 import { useCartStore } from "@/zustand/services/cart/cart";
+import { formatMoney } from "@/hooks/formatMoney";
 
 interface PopoverCartProps {
   cartItems: (CartItemType & { image?: string })[];
@@ -48,7 +49,7 @@ const PopoverCart: React.FC<PopoverCartProps> = ({ cartItems, children }) => {
             )}
           </div>
           <div style={{ paddingTop: 12, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div style={{ fontWeight: 600, fontSize: 16 }}>Total: ${total.toFixed(2)}</div>
+            <div style={{ fontWeight: 600, fontSize: 16 }}>Total: {formatMoney(total)}</div>
             <Button
               type="primary"
               size="small"

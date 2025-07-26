@@ -5,6 +5,7 @@ import { Row, Col, Typography, Divider } from "antd";
 import { useCartStore } from "@/zustand/services/cart/cart";
 import CartItem from "@/components/commons/CartItem";
 import Image from "next/image";
+import { formatMoney } from '@/hooks/formatMoney';
 
 const { Title } = Typography;
 
@@ -58,7 +59,7 @@ function CheckoutContent() {
               }}
             >
               <span style={{ fontWeight: 600, fontSize: 18 }}>
-                Total: ${cart?.totalPrice?.toFixed(2) || "0.00"}
+                Total: {formatMoney(cart?.totalPrice || 0)}
               </span>
             </div>
           </div>

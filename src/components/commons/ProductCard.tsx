@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, Rate, Typography, Space, Tag } from 'antd';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { formatMoney } from '@/hooks/formatMoney';
 
 interface ProductCardProps {
   id: number;
@@ -59,14 +60,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <Rate allowHalf disabled value={rating} style={{ fontSize: 16, color: '#FFC107' }} />
       </Space>
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Typography.Title level={4} style={{ marginLeft: -20, fontWeight: 700 }}>
-          ${price}
-        </Typography.Title>
-        {oldPrice && (
-          <Typography.Text delete style={{ color: '#888', fontSize: 16, marginLeft: 8 }}>
-            ${oldPrice}
-          </Typography.Text>
-        )}
+        <div style={{ marginTop: 8 }}>
+          <Typography.Title level={4} style={{ margin: 0, color: "#1677ff" }}>
+            {formatMoney(price)}
+          </Typography.Title>
+          {oldPrice && (
+            <Typography.Text delete style={{ color: "#999", fontSize: 14 }}>
+              {formatMoney(oldPrice)}
+            </Typography.Text>
+          )}
+        </div>
         {discount && (
           <Tag color="red" style={{ marginLeft: 8, fontWeight: 500, borderRadius: 12, fontSize: 14, background: '#ffeaea', color: '#e53935', border: 'none' }}>
             -{discount}%

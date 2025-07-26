@@ -17,7 +17,7 @@ export const createUser = async (user: Omit<User, 'id'>): Promise<User> => {
 };
 
 export const updateUser = async (id: number, user: Partial<User>): Promise<User> => {
-  const res = await put<User>(`Users/${id}`, user);
+  const res = await put<User>(`Users/${id}`, { ...user, id });
   return res.data;
 };
 
@@ -34,5 +34,15 @@ export interface RegisterPayload {
 
 export const registerUser = async (payload: RegisterPayload) => {
   const res = await post('Auth/register', payload);
+  return res.data;
+};
+
+export interface AssignRolePayload {
+  email: string;
+  roleName: string;
+}
+
+export const assignRole = async (payload: AssignRolePayload) => {
+  const res = await post('/Auth/assign-role', payload);
   return res.data;
 };

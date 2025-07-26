@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Layout from "../ui/Layout";
 import Menu from "../ui/Menu";
 import Input from "../ui/Input";
@@ -9,7 +10,7 @@ import Space from "../ui/Space";
 import Badge from "../ui/Badge";
 import Modal from "../ui/Modal";
 import Form from "../ui/Form";
-import { Input as AntInput } from "antd";
+import { Input as AntInput, AutoComplete } from "antd";
 import {
   ShoppingCartOutlined,
   UserOutlined,
@@ -24,6 +25,10 @@ import { useCartStore } from "@/zustand/services/cart/cart";
 import { useLogin } from "@/tanstack/auth/login";
 import { useAuthStore } from "@/zustand/store/userAuth";
 import { useRegisterMutation } from "@/tanstack/user";
+import { formatMoney } from "@/hooks/formatMoney";
+import { useProductSearch } from "@/hooks/useProductSearch";
+import { IProduct } from "@/types/product";
+import UserDetailDialog from './userComponents/userDetailDialog';
 
 const { Header } = Layout;
 
@@ -32,10 +37,13 @@ const Navbar: React.FC = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isOrderTrackingOpen, setIsOrderTrackingOpen] = useState(false);
   const [isRegisterMode, setIsRegisterMode] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const router = useRouter();
   const loginMutation = useLogin();
   const registerMutation = useRegisterMutation();
   const { token, user, clearAuth } = useAuthStore();
+  const [search, setSearch] = useState("");
+  const { data: searchResult } = useProductSearch(search);
 
   const isLoggedIn = !!token;
   const isAdmin = Array.isArray(user?.roles) && user.roles.includes('Admin');
@@ -69,6 +77,7 @@ const Navbar: React.FC = () => {
         clearAuth();
         message('success', 'Đăng xuất thành công!');
         router.push('/ecomerce/home');
+        window.location.reload();
         break;
       default:
         break;
@@ -129,6 +138,7 @@ const Navbar: React.FC = () => {
 
   const userMenu = {
     items: [
+      ...(isAdmin ? [] : [{ key: 'profile', label: 'View Profile', onClick: () => setIsProfileOpen(true) }]),
       { key: 'orders', label: 'Track Your Orders', onClick: () => handleUserMenuClick('orders') },
       ...(isAdmin ? [{ key: 'admin', label: 'Go to Admin Site', onClick: () => handleUserMenuClick('admin') }] : []),
       { type: 'divider' as const },
@@ -301,17 +311,46 @@ const Navbar: React.FC = () => {
               }}
               items={menuItems}
             />
-            <Input
-              className="custom-rounded-input"
-              placeholder="Search for products..."
-              prefix={<SearchOutlined style={{ color: "#aaa" }} />}
-              style={{
-                width: 600,
-                background: "#f1f1f1",
-                height: 40,
-                marginBottom: 20,
-              }}
-            />
+            <AutoComplete
+              style={{ width: 600, marginBottom: 20 }}
+              options={
+                searchResult?.map((product: IProduct) => ({
+                  value: String(product.id), 
+                  label: (
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <Image
+                        src={product.images?.[0]?.imageUrl || "/images/sakura.png"}
+                        alt={product.name}
+                        width={40}
+                        height={40}
+                        style={{ objectFit: "cover", borderRadius: 4 }}
+                      />
+                      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                        <div style={{ fontWeight: 500 }}>{product.name}</div>
+                        <div style={{ color: "#1677ff", textAlign: "right", width: "100%" }}>
+                          {formatMoney(product.price)}
+                        </div>
+                      </div>
+                    </div>
+                  ),
+                })) || []
+              }
+              onSelect={(id) => router.push(`/ecomerce/products/${id}`)}
+              onSearch={setSearch}
+              value={search}
+              onChange={setSearch}
+            >
+              <AntInput
+                placeholder="Search for products..."
+                prefix={<SearchOutlined style={{ color: "#aaa" }} />}
+                allowClear
+                style={{
+                  background: "#f1f1f1",
+                  height: 40,
+                  borderRadius: 24,
+                }}
+              />
+            </AutoComplete>
             <Space size="large" style={{ marginLeft: 20 }}>
               <Badge count={cartItems.length} size="small">
                 <PopoverCart cartItems={cartItems}>
@@ -435,7 +474,7 @@ const Navbar: React.FC = () => {
                 { required: true, message: "Hãy nhập mật khẩu!" },
                 { min: 6, message: "Mật khẩu tối thiểu 6 ký tự!" },
                 {
-                  pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).*$/,
+                  pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=!]).*$/,
                   message: "Mật khẩu phải có chữ hoa, chữ thường, số và ký tự đặc biệt!",
                 },
               ]}
@@ -488,6 +527,13 @@ const Navbar: React.FC = () => {
           console.log('Closing order tracking dialog...');
           setIsOrderTrackingOpen(false);
         }}
+      />
+
+      <UserDetailDialog
+        open={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        user={user}
+        isProfileMode
       />
     </>
   );

@@ -8,6 +8,7 @@ import { Order } from '@/types/order';
 import OrderDetailDialog from '../../../components/commons/orderComponents/orderDetailDialog';
 import dayjs, { Dayjs } from 'dayjs';
 import { useOrdersQuery, useOrderDetailQuery } from '@/tanstack/order';
+import { formatMoney } from '@/hooks/formatMoney';
 
 const deliveryStatuses = ['Pending', 'Shipping', 'Delivered', 'Completed', 'Cancelled'];
 
@@ -72,7 +73,7 @@ const OrderManagement: React.FC = () => {
       dataIndex: 'totalAmount',
       width: 120,
       align: 'center',
-      render: (record) => <span className="font-semibold text-blue-600">${record.totalAmount.toFixed(2)}</span>,
+      render: (record) => <span className="font-semibold text-blue-600">{formatMoney(record.totalAmount)}</span>,
     },
   ];
 

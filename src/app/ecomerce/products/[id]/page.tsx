@@ -9,6 +9,7 @@ import { getProductDetail } from "@/zustand/services/product/product";
 import { IProductDetail, IImage, IProduct } from "@/types/product";
 import { useCartStore } from "@/zustand/services/cart/cart";
 import { useProductImages, useProducts } from "@/tanstack/product";
+import { formatMoney } from '@/hooks/formatMoney';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -33,10 +34,6 @@ export default function ProductDetail() {
       try {
         const data = await getProductDetail(id);
         setProduct(data);
-        console.log("Product detail:", data);
-        console.log("Product images from API:", productImages);
-        console.log("Simple image URLs (WORKING):", simpleImageUrls);
-        console.log("Detail API images (BROKEN):", productImages);
       } catch {
         setProduct(null);
       }
@@ -183,9 +180,9 @@ export default function ProductDetail() {
             }}
           />
           <div style={{ marginTop: 8 }}>
-            <Title level={3} type="danger" style={{ margin: 0 }}>
-              ${product.price}
-            </Title>
+            <Typography.Title level={2} style={{ color: '#1677ff', margin: 0 }}>
+              {formatMoney(product.price)}
+            </Typography.Title>
             <Text style={{ color: "#888" }}>
               Stock: {product.stockQuantity}
             </Text>

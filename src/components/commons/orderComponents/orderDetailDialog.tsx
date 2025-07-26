@@ -4,6 +4,7 @@ import { Order } from '@/types/order';
 import { useUpdateOrderDeliveryStatusMutation } from '@/tanstack/order';
 import { useProducts } from '@/tanstack/product';
 import { useCancelOrderMutation } from '@/tanstack/order';
+import { formatMoney } from '@/hooks/formatMoney';
 
 interface OrderDetailDialogProps {
     open: boolean;
@@ -29,9 +30,9 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({ open, onClose, or
             const product = products.find(p => p.id === record.productId);
             return product?.name || text;
         } },
-        { title: 'Unit Price', dataIndex: 'unitPrice', key: 'unitPrice', render: (v: number) => `$${v.toFixed(2)}` },
         { title: 'Quantity', dataIndex: 'quantity', key: 'quantity' },
-        { title: 'Total', dataIndex: 'totalPrice', key: 'totalPrice', render: (v: number) => `$${v.toFixed(2)}` },
+        { title: 'Unit Price', dataIndex: 'unitPrice', key: 'unitPrice', render: (v: number) => formatMoney(v) },
+        { title: 'Total', dataIndex: 'totalPrice', key: 'totalPrice', render: (v: number) => formatMoney(v) },
     ];
 
     const handleUpdateStatus = async (newStatus: string) => {
@@ -124,13 +125,11 @@ const OrderDetailDialog: React.FC<OrderDetailDialogProps> = ({ open, onClose, or
             />
             <Divider style={{ margin: '8px 0' }} />
             {/* Total summary */}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', fontSize: 16 }}>
-                <div>
-                    <div><b>Subtotal:</b> ${order.subtotal.toFixed(2)}</div>
-                    <div><b>Tax:</b> ${order.taxAmount.toFixed(2)}</div>
-                    <div><b>Shipping Fee:</b> ${order.shippingFee.toFixed(2)}</div>
-                    <div><b>Total Amount:</b> <span style={{ color: '#1677ff', fontWeight: 600 }}>${order.totalAmount.toFixed(2)}</span></div>
-                </div>
+            <div style={{ textAlign: 'right', fontSize: 16 }}>
+                <div><b>Subtotal:</b> {formatMoney(order.subtotal)}</div>
+                <div><b>Tax:</b> {formatMoney(order.taxAmount)}</div>
+                <div><b>Shipping:</b> {formatMoney(order.shippingFee)}</div>
+                <div><b>Total Amount:</b> <span style={{ color: '#1677ff', fontWeight: 600 }}>{formatMoney(order.totalAmount)}</span></div>
             </div>
             {['Pending', 'Shipping'].includes(order.status) && (
                 <div style={{ display: 'flex', gap: 12, marginTop: -35 }}>

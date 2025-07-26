@@ -4,6 +4,7 @@ import { Order } from '@/types/order';
 import { useUserOrdersQuery, useConfirmOrderReceivedMutation, useOrderDetailQuery } from '@/tanstack/order';
 import { useProducts } from '@/tanstack/product';
 import { CheckCircleOutlined, ClockCircleOutlined, CarOutlined, CheckOutlined } from '@ant-design/icons';
+import { formatMoney } from '@/hooks/formatMoney';
 
 const { Title, Text } = Typography;
 
@@ -151,7 +152,7 @@ const UserOrderTracking: React.FC<UserOrderTrackingProps> = ({ open, onClose }) 
                       {order.status}
                     </Tag>
                     <br />
-                    <Text strong>${order.totalAmount.toFixed(2)}</Text>
+                    <Text strong>{formatMoney(order.totalAmount)}</Text>
                   </div>
                 </Card>
               ))
@@ -185,13 +186,13 @@ const UserOrderTracking: React.FC<UserOrderTrackingProps> = ({ open, onClose }) 
                       <br />
                       <Text type="secondary">Số lượng: {item.quantity}</Text>
                     </div>
-                    <Text strong>${item.totalPrice.toFixed(2)}</Text>
+                    <Text strong>{formatMoney(item.totalPrice)}</Text>
                   </div>
                 ))}
                 <Divider />
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Text>Tổng cộng:</Text>
-                  <Text strong>${selectedOrder!.totalAmount.toFixed(2)}</Text>
+                  <Text strong>{formatMoney(selectedOrder!.totalAmount)}</Text>
                 </div>
               </Card>
 

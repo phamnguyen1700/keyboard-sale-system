@@ -11,6 +11,7 @@ import { IProduct, IProductDetail } from '@/types/product';
 import ProductImageDialog from '../../../components/commons/productComponents/productImageDialog';
 import { useCategories } from '@/tanstack/category';
 import { ICategory } from '@/types/category';
+import { formatMoney } from '@/hooks/formatMoney';
 
 const { Option } = Select;
 
@@ -77,8 +78,8 @@ const ProductManagement: React.FC = () => {
       width: 100,
       align: 'center',
       render: (record) => (
-        <span className="font-semibold text-green-600">
-          ${record.price.toFixed(2)}
+        <span className="font-semibold text-blue-600">
+          {formatMoney(record.price)}
         </span>
       ),
     },

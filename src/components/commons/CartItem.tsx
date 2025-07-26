@@ -3,6 +3,7 @@ import React from "react";
 import { CartItem as CartItemType } from "@/types/cart";
 import { useCartStore } from "@/zustand/services/cart/cart";
 import Image from "next/image";
+import { formatMoney } from "@/hooks/formatMoney";
 
 interface CartItemProps extends Omit<CartItemType, "productId"> {
   image?: string;
@@ -65,7 +66,7 @@ const CartItem: React.FC<CartItemProps> = ({
         </div>
       </div>
       <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end", alignItems: "flex-end", minHeight: 48 }}>
-        <div style={{ fontWeight: 600, fontSize: 16 }}>${(unitPrice).toFixed(2)}</div>
+        <div style={{ fontWeight: 600, fontSize: 16 }}>{formatMoney(unitPrice)}</div>
         <button
           style={{ marginTop: 8, border: "none", background: "#ff4d4f", color: "white", borderRadius: 6, padding: "2px 8px", cursor: "pointer", fontSize: 12 }}
           onClick={handleRemove}
