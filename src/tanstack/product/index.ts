@@ -47,6 +47,7 @@ export const useProductImages = (productId: number) => {
     queryKey: ['product-images', productId],
     queryFn: () => getProductImages(productId),
     enabled: !!productId,
+    staleTime: 5 * 60 * 1000, // 5 phút
   });
 };
 

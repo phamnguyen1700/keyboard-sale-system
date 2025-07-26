@@ -38,8 +38,7 @@ export const uploadProductImage = async (
     formData,
     {
       headers: {
-        // ❗❗❗ Đừng set Content-Type ở đây — để axios tự set với boundary
-        Authorization: `Bearer ${localStorage.getItem('token')}`, // hoặc chỗ nào bạn lấy token
+        Authorization: `Bearer ${localStorage.getItem('token')}`, 
       },
     }
   );
@@ -49,7 +48,7 @@ export const uploadProductImage = async (
 
 
 export const getProductImages = async (productId: number) => {
-  const res = await get(`/products/${productId}/ProductImages`);
+  const res = await get(`products/${productId}/ProductImages`);
   return res.data;
 };
 

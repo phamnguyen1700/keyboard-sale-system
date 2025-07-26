@@ -4,11 +4,9 @@ import React from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Layout, Menu, Avatar, Dropdown } from 'antd';
 import {
-  DashboardOutlined,
   ShoppingOutlined,
   ShoppingCartOutlined,
   UserOutlined,
-  SettingOutlined,
   LogoutOutlined,
   ProfileOutlined,
 } from '@ant-design/icons';
@@ -17,7 +15,9 @@ import { useAuthStore } from '@/zustand/store/userAuth';
 
 const { Sider } = Layout;
 
-interface SidebarProps {}
+interface SidebarProps {
+  [key: string]: unknown;
+}
 
 const Sidebar: React.FC<SidebarProps> = () => {
   const router = useRouter();
@@ -26,11 +26,6 @@ const Sidebar: React.FC<SidebarProps> = () => {
 
   // Menu items based on the manage folder structure
   const menuItems = [
-    {
-      key: '/manage/dashboard',
-      icon: <DashboardOutlined />,
-      label: 'Dashboard',
-    },
     {
       key: '/manage/product',
       icon: <ShoppingOutlined />,
@@ -45,11 +40,6 @@ const Sidebar: React.FC<SidebarProps> = () => {
       key: '/manage/user',
       icon: <UserOutlined />,
       label: 'Users',
-    },
-    {
-      key: '/manage/settings',
-      icon: <SettingOutlined />,
-      label: 'Settings',
     },
   ];
 

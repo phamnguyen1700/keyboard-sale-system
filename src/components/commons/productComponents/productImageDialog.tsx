@@ -6,6 +6,7 @@ import type { UploadRequestOption, RcFile } from 'rc-upload/lib/interface';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from "react-toastify";
 import { IImage } from '@/types/product';
+import Image from 'next/image';
 
 interface RcFileWithOrigin extends RcFile {
   originFileObj?: File;
@@ -43,10 +44,12 @@ const ProductImageDialog: React.FC<{ open: boolean; onClose: () => void; product
         };
         return (
           <div key={order} style={{ display: 'inline-block', marginRight: 16, position: 'relative' }}>
-            <img
+            <Image
               src={img.imageUrl}
               alt={img.altText || `image-${order}`}
-              style={{ width: 104, height: 104, objectFit: 'cover', borderRadius: 8, border: '1px solid #eee' }}
+              width={104}
+              height={104}
+              style={{ objectFit: 'cover', borderRadius: 8, border: '1px solid #eee' }}
             />
             <Button
               danger

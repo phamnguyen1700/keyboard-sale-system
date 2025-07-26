@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Modal, Form, Input, Button, Select, Space, message, Popconfirm } from 'antd';
+import { Modal, Form, Input, Button, Select, Space, Popconfirm } from 'antd';
 import { User } from '@/types/user';
 
 interface UserDetailDialogProps {
@@ -30,12 +30,12 @@ const UserDetailDialog: React.FC<UserDetailDialogProps> = ({ open, onClose, user
     }
   }, [user, isEdit, form, open]);
 
-  const handleFinish = (values: any) => {
-    const submitValues = { ...values, roles: [values.roles] };
+  const handleFinish = (values: Record<string, unknown>) => {
+    const submitValues = { ...values, roles: [values.roles as string] };
     if (isEdit && onUpdate) {
-      onUpdate(submitValues);
+      onUpdate(submitValues as Partial<User>);
     } else {
-      onSubmit(submitValues);
+      onSubmit(submitValues as Omit<User, 'id'>);
     }
   };
 
@@ -45,7 +45,7 @@ const UserDetailDialog: React.FC<UserDetailDialogProps> = ({ open, onClose, user
       onCancel={onClose}
       title={isEdit ? 'Cập nhật người dùng' : 'Tạo mới người dùng'}
       footer={null}
-      destroyOnClose
+      destroyOnHidden
       centered
     >
       <Form

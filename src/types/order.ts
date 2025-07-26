@@ -37,6 +37,7 @@ export interface Order {
   isShipped: boolean;
   estimatedDelivery: string;
   user: OrderUser;
+  [key: string]: unknown;
 }
 
 export type OrderList = Order[];

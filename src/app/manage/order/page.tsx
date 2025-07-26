@@ -21,7 +21,7 @@ const OrderManagement: React.FC = () => {
   const [toDate, setToDate] = useState<Dayjs | null>(null);
 
   const { data: orders = [], isLoading } = useOrdersQuery();
-  const { data: orderDetail, isLoading: isDetailLoading } = useOrderDetailQuery(selectedOrderId ?? undefined);
+  const { data: orderDetail } = useOrderDetailQuery(selectedOrderId ?? undefined);
 
   const filteredOrders = orders.filter(order => {
     if (order.status !== activeStatus) return false;
@@ -147,7 +147,6 @@ const OrderManagement: React.FC = () => {
         open={detailOpen}
         onClose={() => setDetailOpen(false)}
         order={orderDetail as Order | null}
-        loading={isDetailLoading}
       />
     </div>
   );

@@ -7,6 +7,7 @@ export interface IProduct {
   categoryId: number;
   categoryName: string;
   images: IImage[];
+  [key: string]: unknown;
 }
 
 export interface IProductDetail {

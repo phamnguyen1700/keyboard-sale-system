@@ -65,7 +65,13 @@ const ProductPage = () => {
             ) : (
               <Row gutter={[24, 24]}>
                 {products.map((product, idx) => (
-                  <Col key={product.id ?? idx} xs={24} sm={12} md={8}>
+                  <Col
+                    key={product.id ?? idx}
+                    xs={24}
+                    sm={12}
+                    md={8}
+                    style={{ maxWidth: "fit-content" }}
+                  >
                     <ProductCard
                       id={product.id}
                       image={
