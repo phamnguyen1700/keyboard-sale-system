@@ -4,7 +4,7 @@
 
 /* Ant Design 5.0 Dark Theme Customization */
 :root {
-  --primary-color: #1890ff;
+  --primary-color: #000000;
   --divider-color: #e0e0e0;
   --secondary-color: #f0f2f5;
   --tertiary-color: #001529;
@@ -244,14 +244,14 @@ table tbody tr:hover,
 }
 
 .ant-pagination-item-active {
-  background: #2563eb !important;
+  background: black !important;
   color: #fff !important;
   border: none !important;
 }
 
 .ant-pagination-item:hover {
   background: #e0e7ff !important;
-  color: #2563eb !important;
+  color: black !important;
 }
 
 /* Nút điều hướng */
@@ -264,7 +264,7 @@ table tbody tr:hover,
 
 .ant-pagination-prev:hover, .ant-pagination-next:hover {
   background: #e0e7ff !important;
-  color: #2563eb !important;
+  color: black !important;
 }
 
 /* Dropdown page size */
@@ -309,3 +309,29 @@ table tbody tr:hover,
 .ant-input-affix-wrapper:hover {
   border-color: #000 !important;
 }
+
+.ant-tabs-nav-list {
+  width: 100%;
+  display: flex;
+}
+.ant-tabs-tab {
+  flex: 1 1 0;
+  justify-content: center;
+}
+
+/* Màu chữ tab khi active */
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--primary-color) !important;
+}
+
+/* Màu chữ tab khi hover */
+.ant-tabs-tab:hover .ant-tabs-tab-btn {
+  color: var(--primary-color) !important;
+  border-bottom: 0.5px solid var(--primary-color) !important;
+}
+
+/* Màu gạch chân tab active */
+.ant-tabs-ink-bar {
+  background: var(--primary-color) !important;
+}
+

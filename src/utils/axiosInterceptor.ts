@@ -37,7 +37,6 @@ http.interceptors.response.use(
         return http(originalRequest);
       } catch (refreshError) {
         useAuthStore.getState().clearAuth();
-        window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }

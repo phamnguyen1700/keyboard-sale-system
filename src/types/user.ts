@@ -1,9 +1,12 @@
 export interface User {
-    id?: number;
-    email?: string;
-    username?: string;
-    roles?: string[];
+  id: number;
+  email: string;
+  username: string;
+  roles: string[];
 }
+
+export type UserList = User[];
+
 export interface LoginTypes {
     token: string;
     expiration: string;

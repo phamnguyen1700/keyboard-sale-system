@@ -7,6 +7,7 @@ import Image from '@/components/ui/Image';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import FeedbackCard from '@/components/commons/FeedbackCard';
+import { IProduct } from '@/types/product';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -28,7 +29,7 @@ const fakeData = [
 
 export default function ProductDetail() {
     const { id } = useParams();
-    const [product, setProduct] = useState<any>(null);
+    const [product, setProduct] = useState<IProduct | null>(null);
     const [quantity, setQuantity] = useState(1);
     const [selectedSize, setSelectedSize] = useState('Large');
     const [selectedColor, setSelectedColor] = useState('brown');
@@ -92,6 +93,7 @@ export default function ProductDetail() {
                                     >
                                         <Image  
                                             src={img}
+                                            alt={`Product image ${idx + 1}`}
                                             width="100%"
                                             height="100%"
                                             style={{ borderRadius: 8, objectFit: 'cover' }}

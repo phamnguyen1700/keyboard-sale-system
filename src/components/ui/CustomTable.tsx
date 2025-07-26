@@ -1,10 +1,10 @@
 "use client";
 
 import React from 'react';
-import { Table as AntTable, TableProps } from 'antd';
+import { Table as AntTable } from 'antd';
 import { CustomTableProps, Column } from '../../types/table';
 
-export default function CustomTable<T extends Record<string, any>>({
+export default function CustomTable<T extends Record<string, unknown>>({
   columns,
   records,
   loading = false,
@@ -15,7 +15,6 @@ export default function CustomTable<T extends Record<string, any>>({
   bordered = true,
   scroll,
 }: CustomTableProps<T>) {
-  
   // Convert our Column type to Ant Design's ColumnType
   const antColumns = columns.map((col: Column<T>) => ({
     key: col.key,
@@ -23,7 +22,7 @@ export default function CustomTable<T extends Record<string, any>>({
     dataIndex: col.dataIndex,
     width: col.width,
     align: col.align,
-    render: col.render ? (value: any, record: T) => col.render!(record) : undefined,
+    render: col.render ? (value: unknown, record: T) => col.render!(record) : undefined,
   }));
 
   // Handle row click
@@ -34,7 +33,7 @@ export default function CustomTable<T extends Record<string, any>>({
   };
 
   // Custom row className for hover effect
-  const getRowClassName = (record: T, index: number) => {
+  const getRowClassName = () => {
     return 'custom-table-row hover:bg-[color:var(--secondary)] cursor-pointer';
   };
 
@@ -62,12 +61,11 @@ export default function CustomTable<T extends Record<string, any>>({
         })}
         rowClassName={getRowClassName}
         className="custom-table"
-        // Custom styles for header
         components={{
           header: {
-            cell: ({ children, ...props }: any) => (
-              <th 
-                {...props} 
+            cell: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => (
+              <th
+                {...props}
                 className="px-4 py-2 text-center text-xs font-semibold text-white bg-[color:var(--tertiary)] border-b border-gray-400"
               >
                 {children}
@@ -75,9 +73,9 @@ export default function CustomTable<T extends Record<string, any>>({
             ),
           },
           body: {
-            cell: ({ children, ...props }: any) => (
-              <td 
-                {...props} 
+            cell: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => (
+              <td
+                {...props}
                 className="px-4 py-2 text-xs text-[color:var(--text-color)] border-b border-gray-400"
               >
                 {children}
@@ -85,7 +83,6 @@ export default function CustomTable<T extends Record<string, any>>({
             ),
           },
         }}
-        // Empty state
         locale={{
           emptyText: (
             <div className="text-center py-4">
