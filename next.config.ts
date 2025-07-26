@@ -2,7 +2,17 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   sassOptions: {
-    includePaths: ['./src'],
+    includePaths: ["./src"],
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "qr.sepay.vn",
+        port: "",
+        pathname: "/**",
+      },
+    ],
   },
   images: {
     domains: [
