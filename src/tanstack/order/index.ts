@@ -50,11 +50,10 @@ export const useUpdateOrderDeliveryStatusMutation = () => {
     });
 };
 
-export const useUserOrdersQuery = (userId: number | undefined) => {
+export const useUserOrdersQuery = () => {
     return useQuery<OrderList, Error>({
-        queryKey: ['user-orders', userId],
-        queryFn: () => getUserOrders(userId!),
-        enabled: !!userId,
+        queryKey: ['user-orders'],
+        queryFn: () => getUserOrders(),
     });
 };
 
