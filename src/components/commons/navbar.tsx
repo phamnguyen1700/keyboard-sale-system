@@ -406,10 +406,9 @@ const Navbar: React.FC = () => {
             onFinish={async (values) => {
               try {
                 await registerMutation.mutateAsync(values);
-                message("success", "Đăng ký thành công! Vui lòng đăng nhập.");
                 setIsRegisterMode(false);
-              } catch (err: any) {
-                message("error", err?.response?.data?.message || "Đăng ký thất bại!");
+              } catch {
+                console.log("Đăng ký thất bại!");
               }
             }}
             style={{ padding: 20 }}
