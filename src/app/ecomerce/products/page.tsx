@@ -11,7 +11,7 @@ import { useProducts } from "@/tanstack/product";
 
 const { Content } = Layout;
 
-const PAGE_SIZE = 9;
+const PAGE_SIZE = 12;
 
 const ProductPage = () => {
   const [current, setCurrent] = useState(1);
@@ -20,6 +20,9 @@ const ProductPage = () => {
     pageSize: PAGE_SIZE,
   });
   const total = products.length;
+  
+  console.log('Products fetched:', products.length);
+  console.log('Products:', products);
   // If your API returns total count, use it instead of products.length
 
   return (
@@ -70,7 +73,8 @@ const ProductPage = () => {
                     xs={24}
                     sm={12}
                     md={8}
-                    style={{ maxWidth: "fit-content" }}
+                    lg={8}
+                    xl={8}
                   >
                     <ProductCard
                       id={product.id}

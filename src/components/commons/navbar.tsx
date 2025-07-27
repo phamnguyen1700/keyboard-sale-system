@@ -27,6 +27,7 @@ import { useAuthStore } from "@/zustand/store/userAuth";
 import { useRegisterMutation } from "@/tanstack/user";
 import { formatMoney } from "@/hooks/formatMoney";
 import { useProductSearch } from "@/hooks/useProductSearch";
+import { useProductImages } from "@/hooks/useProductImages";
 import { IProduct } from "@/types/product";
 import UserDetailDialog from './userComponents/userDetailDialog';
 
@@ -209,6 +210,11 @@ const Navbar: React.FC = () => {
   };
 
   const { cart, fetchCart } = useCartStore();
+  
+  // Get product IDs from cart items
+  const productIds = cart?.items?.map(item => item.productId) || [];
+  const { data: productImages } = useProductImages(productIds);
+  
   const cartItems =
     cart?.items?.map((item) => ({
       id: item.id,
@@ -217,7 +223,7 @@ const Navbar: React.FC = () => {
       unitPrice: item.unitPrice,
       quantity: item.quantity,
       totalPrice: item.totalPrice,
-      image: "/images/sakura.png", // Replace with actual image if available
+      image: productImages?.get(item.productId) || "/images/sakura.png",
     })) || [];
 
   // Fetch cart on mount to ensure cart items are loaded

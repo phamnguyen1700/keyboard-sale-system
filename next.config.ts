@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     includePaths: ["./src"],
   },
   images: {
-    domains: ["freakybucket1.s3.ap-southeast-1.amazonaws.com"],
+    domains: ["freakybucket1.s3.amazonaws.com"],
     remotePatterns: [
       {
         protocol: "https",

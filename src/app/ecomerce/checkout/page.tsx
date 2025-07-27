@@ -6,6 +6,7 @@ import { useCartStore } from "@/zustand/services/cart/cart";
 import CartItem from "@/components/commons/CartItem";
 import Image from "next/image";
 import { formatMoney } from '@/hooks/formatMoney';
+import { useProductImages } from '@/hooks/useProductImages';
 
 const { Title } = Typography;
 
@@ -17,6 +18,10 @@ function CheckoutContent() {
   const orderId = searchParams.get("orderId");
 
   const cartItems = cart?.items || [];
+  
+  // Get product IDs from cart items
+  const productIds = cartItems.map(item => item.productId);
+  const { data: productImages } = useProductImages(productIds);
 
   return (
     <div className="max-w-5xl mx-auto py-12 px-4">
@@ -45,7 +50,7 @@ function CheckoutContent() {
                 <CartItem
                   key={item.id}
                   {...item}
-                  image={"/images/sakura.png"}
+                  image={productImages?.get(item.productId) || "/images/sakura.png"}
                 />
               ))
             )}

@@ -19,6 +19,7 @@ const ProductPagination: React.FC<ProductPaginationProps> = ({ current, pageSize
             onChange={onChange}
             showSizeChanger={false}
             showQuickJumper={false}
+            showTitle={false}
             itemRender={(page, type, originalElement) => {
                 const baseStyle: React.CSSProperties = {
                     border: '1px solid #eee',
@@ -40,7 +41,20 @@ const ProductPagination: React.FC<ProductPaginationProps> = ({ current, pageSize
 
                 if (type === 'prev') {
                     return (
-                        <button style={{ ...baseStyle }}>
+                        <button 
+                            style={{ 
+                                ...baseStyle,
+                                transition: 'all 0.2s ease',
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.background = '#f0f0f0';
+                                e.currentTarget.style.borderColor = '#d9d9d9';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.background = '#fff';
+                                e.currentTarget.style.borderColor = '#eee';
+                            }}
+                        >
                             <LeftOutlined />
                         </button>
                     );
@@ -48,7 +62,20 @@ const ProductPagination: React.FC<ProductPaginationProps> = ({ current, pageSize
 
                 if (type === 'next') {
                     return (
-                        <button style={{ ...baseStyle }}>
+                        <button 
+                            style={{ 
+                                ...baseStyle,
+                                transition: 'all 0.2s ease',
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.background = '#f0f0f0';
+                                e.currentTarget.style.borderColor = '#d9d9d9';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.background = '#fff';
+                                e.currentTarget.style.borderColor = '#eee';
+                            }}
+                        >
                             <RightOutlined />
                         </button>
                     );
@@ -64,6 +91,19 @@ const ProductPagination: React.FC<ProductPaginationProps> = ({ current, pageSize
                                 background: isActive ? '#f5f5f5' : '#fff',
                                 boxShadow: isActive ? '0 0 0 1px #000' : 'none',
                                 border: isActive ? '1px solid #000' : '1px solid #eee',
+                                transition: 'all 0.2s ease',
+                            }}
+                            onMouseEnter={(e) => {
+                                if (!isActive) {
+                                    e.currentTarget.style.background = '#f0f0f0';
+                                    e.currentTarget.style.borderColor = '#d9d9d9';
+                                }
+                            }}
+                            onMouseLeave={(e) => {
+                                if (!isActive) {
+                                    e.currentTarget.style.background = '#fff';
+                                    e.currentTarget.style.borderColor = '#eee';
+                                }
                             }}
                         >
                             {page}
